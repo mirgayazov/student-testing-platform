@@ -20,8 +20,12 @@
             <a class="nav-link active" aria-current="page" href="/">Главная</a>
             <a class="nav-link" href="/contacts/">Контакты</a>
             <a class="nav-link" href="/create">Создать пост</a>
-            <a class="nav-link" href="/authorization">Авторизация</a>
-            <a class="nav-link" href="/logout">Разлогиниться</a>
+            {{ if eq . "" }}
+              <a class="nav-link" href="/authorization">Авторизация</a>
+            {{ end }}
+            {{ if eq . "true" }}
+              <a class="nav-link" href="/logout">Разлогиниться</a>
+            {{ end }}
           </nav>
         </div>
       </header>

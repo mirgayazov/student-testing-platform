@@ -21,6 +21,7 @@ var cookieHandler = securecookie.New(
 func setSession(userName string, response http.ResponseWriter) {
 	value := map[string]string{
 		"name": userName,
+		"status": "true",
 	}
 	if encoded, err := cookieHandler.Encode("session", value); err == nil {
 		cookie := &http.Cookie{
@@ -50,6 +51,16 @@ func getUserName(request *http.Request) (userName string) {
 		}
 	}
 	return userName
+}
+
+func getUserStatus(request *http.Request) (userStatus string) {
+	if cookie, err := request.Cookie("session"); err == nil {
+		cookieValue := make(map[string]string)
+		if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
+			userStatus = cookieValue["status"]
+		}
+	}
+	return userStatus
 }
 
 //Article ....
@@ -99,8 +110,12 @@ func index(w http.ResponseWriter, r *http.Request) {
 		}
 		posts = append(posts, post)
 	}
+	userStatus := getUserStatus(r)
+	// if userStatus =="" {
+	// 	fmt.Println("false")
+	// }
 	// defer res.Close()
-	t.ExecuteTemplate(w, "index", posts)
+	t.ExecuteTemplate(w, "index", userStatus)
 }
 
 func create(w http.ResponseWriter, r *http.Request) {
@@ -120,7 +135,7 @@ func registration(w  http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, err.Error())
 	}
 
-	t.ExecuteTemplate(w, "registration", nil)	
+	t.ExecuteTemplate(w, "registration", "")	
 }
 
 func saveUser(w  http.ResponseWriter, r *http.Request) {
@@ -230,7 +245,7 @@ func authorization(w  http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, err.Error())
 	}
 
-	t.ExecuteTemplate(w, "authorization", nil)	
+	t.ExecuteTemplate(w, "authorization", "")	
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
@@ -246,7 +261,6 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-
 	clearSession(w)
 	http.Redirect(w, r, "/", 302)
 }
