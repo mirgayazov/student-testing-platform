@@ -1,8 +1,13 @@
-package types
+package main
 
 import (
 	"fmt"
 )
+
+//Info .....
+type Info struct {
+	UserName, UserStatus, UserPosition string
+}
 
 //Article ....
 type Article struct {
@@ -19,6 +24,7 @@ type Status struct {
 type User struct {
 	ID uint16
 	Hash []byte
+	Position string
 }
 
 func types() {

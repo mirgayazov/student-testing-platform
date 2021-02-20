@@ -1,19 +1,16 @@
-package handlers
+package main
 
 import (
 	"fmt"
-	"./types"
 	"net/http"
 	"html/template"
 	"database/sql"
 	"golang.org/x/crypto/bcrypt"
-	"./cookies"
 )
 
-var posts =[]types.Article{}
+var posts =[]Article{}
 
-//Index .....
-func Index(w http.ResponseWriter, r *http.Request) {
+func index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/index.html","templates/header.html","templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
@@ -31,26 +28,26 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	posts = []types.Article{}
+	posts = []Article{}
 
 	for res.Next() {
-		var post types.Article
+		var post Article
 		err = res.Scan(&post.ID, &post.Title,  &post.Anons,  &post.FullText)
 		if err != nil {
 			panic(err)
 		}
 		posts = append(posts, post)
 	}
-	userStatus := cookies.GetUserStatus(r)
-	// if userStatus =="" {
-	// 	fmt.Println("false")
-	// }
-	// defer res.Close()
-	t.ExecuteTemplate(w, "index", userStatus)
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	t.ExecuteTemplate(w, "index", info)
 }
 
-//Create .....
-func Create(w http.ResponseWriter, r *http.Request) {
+func create(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/create.html","templates/header.html","templates/footer.html")	
 
 	if err != nil {
@@ -61,19 +58,23 @@ func Create(w http.ResponseWriter, r *http.Request) {
 }
 
 //Registration .....
-func Registration(w  http.ResponseWriter, r *http.Request) {
+func registration(w  http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/registration.html","templates/header.html","templates/footer.html")	
 
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	userStatus := cookies.GetUserStatus(r)
 
-	t.ExecuteTemplate(w, "registration", userStatus)	
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+	
+
+	t.ExecuteTemplate(w, "registration", info)	
 }
 
-//SaveUser .....
-func SaveUser(w  http.ResponseWriter, r *http.Request) {
+func saveUser(w  http.ResponseWriter, r *http.Request) {
 	firstName := r.FormValue("first_name")
 	lastName := r.FormValue("last_name")
 	userName := r.FormValue("user_name")
@@ -93,7 +94,7 @@ func SaveUser(w  http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		
-		insert, err := db.Query(fmt.Sprintf("INSERT INTO users (first_name, last_name, hash, is_active,user_name) VALUES('%s','%s','%s', 'false','%s')", firstName, lastName, hashedPassword,userName))
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO users (first_name, last_name, hash, is_active,user_name, position) VALUES('%s','%s','%s', 'false','%s','student')", firstName, lastName, hashedPassword,userName))
 		if err != nil {
 			panic(err)
 		}
@@ -103,8 +104,7 @@ func SaveUser(w  http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//SaveArticle .....
-func SaveArticle(w http.ResponseWriter, r *http.Request) {
+func saveArticle(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 	anons := r.FormValue("anons")
 	fullText := r.FormValue("full_text")
@@ -129,8 +129,7 @@ func SaveArticle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Login .....
-func Login(w http.ResponseWriter, r *http.Request) {
+func login(w http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("user_name")
 	password := []byte(r.FormValue("password"))
 
@@ -139,7 +138,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Введены неверные данные")
 	} else {
 
-		cookies.SetSession(userName, w)
 		connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 		db, err := sql.Open("postgres", connStr)
 		if err != nil {
@@ -147,18 +145,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 		defer db.Close()
 		
-		res, err := db.Query(fmt.Sprintf("SELECT id, hash FROM public.users where user_name='%s'", userName))
+		res, err := db.Query(fmt.Sprintf("SELECT id, hash, position FROM public.users where user_name='%s'", userName))
 		if err != nil {
 			panic(err)
 		}
 
-		var user types.User
+		var user User
 		for res.Next() {
-			err = res.Scan(&user.ID, &user.Hash)
+			err = res.Scan(&user.ID, &user.Hash, &user.Position)
 			if err != nil {
 				panic(err)
 			}
 		}
+
+		setSession(userName, user.Position, w)
 
 		err = bcrypt.CompareHashAndPassword(user.Hash, []byte(password))
 		if err != nil {
@@ -170,25 +170,34 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		t, err := template.ParseFiles("templates/index.html","templates/header.html","templates/footer.html")	
+
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+		}
+		userStatus := getUserStatus(r)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+		t.ExecuteTemplate(w, "index", userStatus)
+
 	}
 }
 
-//Authorization .....
-func Authorization(w  http.ResponseWriter, r *http.Request) {
+func authorization(w  http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/authorization.html","templates/header.html","templates/footer.html")	
 
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	userStatus := cookies.GetUserStatus(r)
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
 
-	t.ExecuteTemplate(w, "authorization", userStatus)	
+	t.ExecuteTemplate(w, "authorization", info)	
 }
 
-//Logout .....
-func Logout(w http.ResponseWriter, r *http.Request) {
-	userName := cookies.GetUserName(r)
+func logout(w http.ResponseWriter, r *http.Request) {
+	userName := getUserName(r)
 	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -200,18 +209,17 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	cookies.ClearSession(w)
+	clearSession(w)
 	http.Redirect(w, r, "/", 302)
 }
 
-//About .....
-func About(w http.ResponseWriter, r *http.Request) {
+func about(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/about.html","templates/header.html","templates/footer.html")	
 
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	userStatus := cookies.GetUserStatus(r)
+	userStatus := getUserStatus(r)
 	t.ExecuteTemplate(w, "about", userStatus)
 }
 
