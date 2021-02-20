@@ -58,6 +58,11 @@ type Article struct {
 	Title, Anons, FullText string
 }	
 
+//Status ....
+type Status struct {
+	Status string
+}
+
 //User .....
 type User struct {
 	ID uint16
@@ -184,7 +189,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		setSession(userName, w)
-
 		connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 		db, err := sql.Open("postgres", connStr)
 		if err != nil {
@@ -215,15 +219,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		//
-		t, err := template.ParseFiles("templates/index.html","templates/header.html","templates/footer.html")
-		if err != nil {
-			fmt.Fprintf(w, err.Error())
-		}
-		status := "true"
-		t.ExecuteTemplate(w, "index", status)
-		//
-		// http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
@@ -237,6 +233,23 @@ func authorization(w  http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "authorization", nil)	
 }
 
+func logout(w http.ResponseWriter, r *http.Request) {
+	userName := getUserName(r)
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	
+	_, err = db.Query(fmt.Sprintf("UPDATE users SET is_active = 'false' WHERE user_name = '%s'", userName))
+	if err != nil {
+		panic(err)
+	}
+
+	clearSession(w)
+	http.Redirect(w, r, "/", 302)
+}
 
 func handleFunc() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
@@ -246,6 +259,7 @@ func handleFunc() {
 	http.HandleFunc("/registration", registration)
 	http.HandleFunc("/authorization", authorization)
 	http.HandleFunc("/login", login)
+	http.HandleFunc("/logout", logout)
 	http.HandleFunc("/saveUser", saveUser)
 	http.ListenAndServe(":8080", nil)
 }
