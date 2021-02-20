@@ -1,4 +1,4 @@
-{{ define "header" }}
+{{ define "testing" }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,23 +18,19 @@
           <h3 class="float-md-start mb-0" style="width: 100px; float: left;">Momodle</h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
             <a class="nav-link" aria-current="page" href="/">Главная</a>
-            <a class="nav-link" href="/about">Об авторе</a>
-            {{ if eq .UserPosition "admin" }}
-              <a class="nav-link" href="/adminPanel">Панель администратора</a>
-            {{ end }}
-            {{ if eq .UserPosition "teacher" }}
-              <a class="nav-link" href="/teacherPanel">Панель преподавателя</a>
-            {{ end }}
-            {{ if eq .UserPosition "student" }}
-              <a class="nav-link" href="/studentPanel">Панель студента</a>
-            {{ end }}
-            {{ if eq .UserStatus "" }}
-              <a class="nav-link" href="/authorization">Авторизация</a>
-            {{ end }}
-            {{ if eq .UserStatus "true" }}
-              <a class="nav-link" href="/logout">Разлогиниться</a>
-            {{ end }}
           </nav>
         </div>
       </header>
-{{ end }}      
+<main class="px-3">
+    <br>
+    <h1>Тестирование</h1>  
+    <form action="/checkAndSaveTest" method="POST">
+        {{ range . }}
+            <h3>Вопрос: {{ .Question }}</h3>
+            <input type="text" name="answer" id="answer" placeholder="Ответ" class="form-control"><br>
+        {{ end }}
+        <button class="btn btn-outline-warning" style="margin-top: 15px;">Сохранить</button>
+    </form> 
+</main>
+{{ template "footer" }}
+{{ end }}

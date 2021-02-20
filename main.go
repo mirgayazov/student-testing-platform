@@ -30,6 +30,9 @@ func handleFunc() {
 	http.HandleFunc("/questionsСontrol", questionsСontrol)
 	http.HandleFunc("/saveQuestion", saveQuestion)
 	//
+	http.HandleFunc("/studentPanel", studentPanel)
+	http.HandleFunc("/testing", testing)
+	//
 	http.HandleFunc("/saveUser", saveUser)
 	http.ListenAndServe(":8080", nil)
 }

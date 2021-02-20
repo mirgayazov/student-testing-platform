@@ -219,8 +219,13 @@ func about(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	userStatus := getUserStatus(r)
-	t.ExecuteTemplate(w, "about", userStatus)
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+	
+	t.ExecuteTemplate(w, "about", info)
 }
 
 func handlers() {

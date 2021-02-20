@@ -9,6 +9,12 @@ type Info struct {
 	UserName, UserStatus, UserPosition string
 }
 
+//Task .....
+type Task struct {
+	ID uint16
+	Question, Answer string
+}
+
 //Article ....
 type Article struct {
 	ID uint16
