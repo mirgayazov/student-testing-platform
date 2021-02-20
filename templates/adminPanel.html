@@ -1,0 +1,13 @@
+{{ define "adminPanel" }}
+{{ template "header" . }}
+<main class="px-3">
+    <br>
+    {{ if eq .UserPosition "admin" }}
+        <h2>Здравствуйте {{ .UserName }}!</h2><br>
+    {{ end }}
+    
+    <a class="btn btn-outline-warning" href="/accessСontrol">Управление доступом пользователей</a><br>
+
+</main>
+{{ template "footer" }}
+{{ end }}

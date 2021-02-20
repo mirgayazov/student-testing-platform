@@ -19,6 +19,12 @@
           <nav class="nav nav-masthead justify-content-center float-md-end">
             <a class="nav-link" aria-current="page" href="/">Главная</a>
             <a class="nav-link" href="/about">Об авторе</a>
+            {{ if eq .UserPosition "admin" }}
+              <a class="nav-link" href="/adminPanel">Панель администратора</a>
+            {{ end }}
+            {{ if eq .UserPosition "teacher" }}
+              <a class="nav-link" href="/teacherPanel">Панель преподавателя</a>
+            {{ end }}
             {{ if eq .UserStatus "" }}
               <a class="nav-link" href="/authorization">Авторизация</a>
             {{ end }}

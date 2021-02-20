@@ -1,14 +1,6 @@
 {{ define "index" }}
 {{ template "header" . }}
 <main class="px-3">
-    {{ if eq .UserPosition "admin" }}
-        <h1>Здравствуйте {{ .UserName }}! Вы вошли со статусом: Aдминистратор</h1>
-    {{ end }}
-
-    {{ if eq .UserPosition "teacher" }}
-        <h1>Здравствуйте {{ .UserName }}! Вы вошли со статусом: Преподаватель</h1>
-    {{ end }}
-
     {{ if eq .UserPosition "student" }}
         <h1>Здравствуйте {{ .UserName }}! Вы вошли со статусом: Студент</h1>
     {{ end }}
