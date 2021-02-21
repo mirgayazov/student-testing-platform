@@ -135,7 +135,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 
 	if userName == "" || r.FormValue("password") == ""{
-		fmt.Fprintf(w, "Введены неверные данные")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 
 		connStr := "user=kamil password=1809 dbname=golang sslmode=disable"

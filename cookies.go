@@ -11,7 +11,7 @@ var cookieHandler = securecookie.New(
 	securecookie.GenerateRandomKey(32),
 )
 
-func setSession(userName string, position string, response http.ResponseWriter) {
+func setSession(userName string,  position string, response http.ResponseWriter) {
 	value := map[string]string{
 		"name": userName,
 		"status": "true",
