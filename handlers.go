@@ -158,12 +158,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		setSession(userName, user.Position, w)
 
 		err = bcrypt.CompareHashAndPassword(user.Hash, []byte(password))
 		if err != nil {
 			fmt.Fprintf(w, "Введены неверные данные")
 		} else {
+			setSession(userName, user.Position, w)
 			_, err := db.Query(fmt.Sprintf("UPDATE users SET is_active = 'true' WHERE id = '%d'", user.ID))
 			if err != nil {
 				panic(err)
