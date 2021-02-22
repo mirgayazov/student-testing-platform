@@ -1,6 +1,6 @@
 {{ define "teacherPanel" }}
 {{ template "header" . }}
-<main class="px-3"><br>
+<main class="px-3"><hr>
     {{ if eq .UserPosition "teacher" }}
         <h2>Здравствуйте {{ .UserName }}!</h2><br>
     {{ end }}

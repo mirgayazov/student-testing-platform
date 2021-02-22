@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"github.com/gorilla/securecookie"
 )
@@ -66,8 +65,4 @@ func getUserPosition(request *http.Request) (userPosition string) {
 		}
 	}
 	return userPosition
-}
-
-func cookies() {
-	fmt.Println("cookies")
 }

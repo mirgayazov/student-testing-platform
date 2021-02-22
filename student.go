@@ -22,7 +22,6 @@ func studentPanel(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "studentPanel", info)	
 }
 
-
 var tasks =[]Task{}
 var tasks2 =[]Task{}
 var ids =[]uint16{}

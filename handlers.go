@@ -8,35 +8,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var posts =[]Article{}
-
 func index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/index.html","templates/header.html","templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
-	}
-
-	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	res, err := db.Query("SELECT * FROM public.articles")
-	if err != nil {
-		panic(err)
-	}
-
-	posts = []Article{}
-
-	for res.Next() {
-		var post Article
-		err = res.Scan(&post.ID, &post.Title,  &post.Anons,  &post.FullText)
-		if err != nil {
-			panic(err)
-		}
-		posts = append(posts, post)
 	}
 
 	var info Info
@@ -69,7 +44,6 @@ func registration(w  http.ResponseWriter, r *http.Request) {
 	info.UserName = getUserName(r)
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
-	
 
 	t.ExecuteTemplate(w, "registration", info)	
 }
@@ -80,8 +54,13 @@ func saveUser(w  http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("user_name")
 	password := []byte(r.FormValue("password"))
 
-	if firstName == "" || lastName == ""{
-		fmt.Fprintf(w, "Не все данные заполнены")
+	if firstName == "" || lastName == "" || userName == "" || len(password) ==0 {
+		message := "Заполните все поля!"
+		t, err := template.ParseFiles("templates/message.html","templates/footer.html")	
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+		}
+		t.ExecuteTemplate(w, "message", message)
 	} else {
 		connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 		db, err := sql.Open("postgres", connStr)
@@ -104,35 +83,9 @@ func saveUser(w  http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func saveArticle(w http.ResponseWriter, r *http.Request) {
-	title := r.FormValue("title")
-	anons := r.FormValue("anons")
-	fullText := r.FormValue("full_text")
-
-	if title == "" || anons == "" || fullText == "" {
-		fmt.Fprintf(w, "Не все данные заполнены")
-	} else {
-		connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
-		db, err := sql.Open("postgres", connStr)
-		if err != nil {
-			panic(err)
-		}
-		defer db.Close()
-
-		insert, err := db.Query(fmt.Sprintf("INSERT INTO articles (title, anons, full_text) VALUES('%s','%s','%s')", title, anons, fullText))
-		if err != nil {
-			panic(err)
-		}
-		defer insert.Close()
-
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	}
-}
-
 func login(w http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("user_name")
 	password := []byte(r.FormValue("password"))
-
 
 	if userName == "" || r.FormValue("password") == ""{
 		message := "Заполните все поля!"
@@ -142,7 +95,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 		}
 		t.ExecuteTemplate(w, "message", message)
 	} else {
-
 		connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 		db, err := sql.Open("postgres", connStr)
 		if err != nil {
@@ -163,7 +115,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-
 		err = bcrypt.CompareHashAndPassword(user.Hash, []byte(password))
 		if err != nil {
 			message := "Вы ввели неверные данные!"
@@ -180,13 +131,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 			}
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
-		// t, err := template.ParseFiles("templates/index.html","templates/header.html","templates/footer.html")	
-		// if err != nil {
-		// 	fmt.Fprintf(w, err.Error())
-		// }
-		// userStatus := getUserStatus(r)
-		// t.ExecuteTemplate(w, "index", userStatus)
-
 	}
 }
 
@@ -235,7 +179,3 @@ func about(w http.ResponseWriter, r *http.Request) {
 	
 	t.ExecuteTemplate(w, "about", info)
 }
-
-func handlers() {
-	fmt.Println("handlers")
-} 

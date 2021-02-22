@@ -11,9 +11,6 @@ func handleFunc() {
 	//
 	http.HandleFunc("/", index)
 	//
-	http.HandleFunc("/create", create)
-	http.HandleFunc("/save_article", saveArticle)
-	//
 	http.HandleFunc("/registration", registration)
 	http.HandleFunc("/authorization", authorization)
 	//
