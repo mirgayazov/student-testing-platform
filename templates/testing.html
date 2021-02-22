@@ -8,10 +8,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://getbootstrap.com/docs/5.0/examples/cover/cover.css">
     <link rel="stylesheet" href="static/css/main.css">
-    <title>Главная страница</title>
+    <title>Тестирование</title>
 </head>
 <body class="d-flex h-100 text-center text-white bg-dark">
-    
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
       <header class="mb-auto">
         <div>
@@ -27,7 +26,8 @@
     <form action="/checkAndSaveTest" method="POST">
         {{ range . }}
             <h3>Вопрос: {{ .Question }}</h3>
-            <input type="text" name="answer" id="answer" placeholder="Ответ" class="form-control"><br>
+            <input type="text" name="ua{{ .Index }}" id="ua{{ .Index }}" placeholder="Ответ" class="form-control"><br>
+            <input type="text" name="id{{ .Index }}" id="id{{ .Index }}" placeholder="Ответ" class="form-control" style="display: none;" value="{{ .ID }}">
         {{ end }}
         <button class="btn btn-outline-warning" style="margin-top: 15px;">Сохранить</button>
     </form> 

@@ -135,7 +135,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 
 	if userName == "" || r.FormValue("password") == ""{
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		message := "Заполните все поля!"
+		t, err := template.ParseFiles("templates/message.html","templates/footer.html")	
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+		}
+		t.ExecuteTemplate(w, "message", message)
 	} else {
 
 		connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
@@ -161,23 +166,26 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 		err = bcrypt.CompareHashAndPassword(user.Hash, []byte(password))
 		if err != nil {
-			fmt.Fprintf(w, "Введены неверные данные")
+			message := "Вы ввели неверные данные!"
+			t, err := template.ParseFiles("templates/message.html","templates/footer.html")	
+			if err != nil {
+				fmt.Fprintf(w, err.Error())
+			}
+			t.ExecuteTemplate(w, "message", message)
 		} else {
 			setSession(userName, user.Position, w)
 			_, err := db.Query(fmt.Sprintf("UPDATE users SET is_active = 'true' WHERE id = '%d'", user.ID))
 			if err != nil {
 				panic(err)
 			}
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
-
-		t, err := template.ParseFiles("templates/index.html","templates/header.html","templates/footer.html")	
-
-		if err != nil {
-			fmt.Fprintf(w, err.Error())
-		}
-		userStatus := getUserStatus(r)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		t.ExecuteTemplate(w, "index", userStatus)
+		// t, err := template.ParseFiles("templates/index.html","templates/header.html","templates/footer.html")	
+		// if err != nil {
+		// 	fmt.Fprintf(w, err.Error())
+		// }
+		// userStatus := getUserStatus(r)
+		// t.ExecuteTemplate(w, "index", userStatus)
 
 	}
 }

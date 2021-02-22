@@ -24,7 +24,6 @@ func adminPanel(w http.ResponseWriter, r *http.Request) {
 
 func accessСontrol(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/accessСontrol.html","templates/header.html","templates/footer.html")	
-
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}

@@ -11,7 +11,7 @@ type Info struct {
 
 //Task .....
 type Task struct {
-	ID uint16
+	ID, Index uint16
 	Question, Answer string
 }
 
