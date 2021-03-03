@@ -40,6 +40,7 @@ func handleFunc() {
 	r.HandleFunc("/adminRequests", adminRequests)
     r.HandleFunc("/approveRequest/{id:[0-9]+}", approveRequest)
 	r.HandleFunc("/rejectRequest/{id:[0-9]+}", rejectRequest)
+	r.HandleFunc("/teacherCourses", teacherCourses)
 	//
 	r.HandleFunc("/saveUser", saveUser)
 	http.ListenAndServe(":8080", r)

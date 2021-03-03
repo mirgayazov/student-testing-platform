@@ -1,0 +1,11 @@
+{{ define "teacherCourses" }}
+{{ template "header" .Info }}
+<main class="px-3"><hr>
+    <h1>Мои курсы</h1>
+    {{ range .Course }}
+        <hr>
+        <h2>-> {{ .CourseName }}</h2>
+    {{ end }}
+</main>
+{{ template "footer" }}
+{{ end }}

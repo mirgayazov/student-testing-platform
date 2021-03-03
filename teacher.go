@@ -95,5 +95,40 @@ func requestToСreateСourse(w http.ResponseWriter, r *http.Request) {
 		t.ExecuteTemplate(w, "message", message)
 	}
 	defer insert.Close()	
-	
+}
+
+func teacherCourses(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("templates/teacherCourses.html","templates/header.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	res, err := db.Query(fmt.Sprintf("SELECT course_name FROM courses where teacher_name='%s'",info.UserName))
+	if err != nil {
+		panic(err)
+	}
+	courses := []Course{}
+	for res.Next() {
+		var course Course
+		err = res.Scan(&course.CourseName)
+		if err != nil {
+			panic(err)
+		}
+		courses = append(courses, course)
+	}
+	defer res.Close()
+
+	t.ExecuteTemplate(w, "teacherCourses", struct{Info, Course interface{}}{info, courses});
 }

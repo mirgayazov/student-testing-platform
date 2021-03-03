@@ -34,3 +34,8 @@ type Request struct {
 	ID uint16
 	TeacherName, CourseName string
 }
+
+//Course .....
+type Course struct {
+	CourseName string
+}
