@@ -8,41 +8,40 @@ import (
 )
 
 func handleFunc() {
+	r := mux.NewRouter()
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	//
-	http.HandleFunc("/", index)
+	r.HandleFunc("/", index)
 	//
-	http.HandleFunc("/registration", registration)
-	http.HandleFunc("/authorization", authorization)
+	r.HandleFunc("/registration", registration)
+	r.HandleFunc("/authorization", authorization)
 	//
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/logout", logout)
+	r.HandleFunc("/login", login)
+	r.HandleFunc("/logout", logout)
 	//
-	http.HandleFunc("/about", about)
-	http.HandleFunc("/tizd", tizd)
-
+	r.HandleFunc("/about", about)
+	r.HandleFunc("/tizd", tizd)
 	//
-	http.HandleFunc("/adminPanel", adminPanel)
-	http.HandleFunc("/accessСontrol", accessСontrol)
-	http.HandleFunc("/saveUserPosition", saveUserPosition)
+	r.HandleFunc("/adminPanel", adminPanel)
+	r.HandleFunc("/accessСontrol", accessСontrol)
+	r.HandleFunc("/saveUserPosition", saveUserPosition)
 	//
-	http.HandleFunc("/teacherPanel", teacherPanel)
-	http.HandleFunc("/questionsСontrol", questionsСontrol)
-	http.HandleFunc("/saveQuestion", saveQuestion)
+	r.HandleFunc("/teacherPanel", teacherPanel)
+	r.HandleFunc("/questionsСontrol", questionsСontrol)
+	r.HandleFunc("/saveQuestion", saveQuestion)
 	//
-	http.HandleFunc("/studentPanel", studentPanel)
-	http.HandleFunc("/testing", testing)
-	http.HandleFunc("/checkAndSaveTest", checkAndSaveTest)
+	r.HandleFunc("/studentPanel", studentPanel)
+	r.HandleFunc("/testing", testing)
+	r.HandleFunc("/checkAndSaveTest", checkAndSaveTest)
 	//
-	http.HandleFunc("/createCourse", createCourse)
-	http.HandleFunc("/requestToСreateСourse", requestToСreateСourse)
+	r.HandleFunc("/createCourse", createCourse)
+	r.HandleFunc("/requestToСreateСourse", requestToСreateСourse)
 	//
-	http.HandleFunc("/adminRequests", adminRequests)
-	r := mux.NewRouter()
-    r.HandleFunc("/approveRequest", approveRequest)
-    r.HandleFunc("/", index)
+	r.HandleFunc("/adminRequests", adminRequests)
+    r.HandleFunc("/approveRequest/{id:[0-9]+}", approveRequest)
+	r.HandleFunc("/rejectRequest/{id:[0-9]+}", rejectRequest)
 	//
-	http.HandleFunc("/saveUser", saveUser)
+	r.HandleFunc("/saveUser", saveUser)
 	http.ListenAndServe(":8080", r)
 }
 
