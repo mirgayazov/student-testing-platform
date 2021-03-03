@@ -28,3 +28,9 @@ type User struct {
 	Hash []byte
 	Position string
 }
+
+//Request .....
+type Request struct {
+	ID uint16
+	TeacherName, CourseName string
+}

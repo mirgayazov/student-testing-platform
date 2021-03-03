@@ -1,0 +1,13 @@
+{{ define "adminRequests" }}
+{{ template "header" .Info }}
+<main class="px-3"><hr>
+    <h1>Заявки</h1>  
+    {{ range .Request }}
+        <hr>
+        <h3>{{ .TeacherName}} хочет создать курс под названием "{{ .CourseName }}"</h3>
+        <a class="btn btn-outline-success" href="/approveRequest/{{ .ID }}">Одобрить</a><br>
+        <a class="btn btn-outline-danger" href="/rejectRequest/{{ .ID }}" style="margin-top: 10px;">Отклонить</a><br>
+    {{ end }}
+</main>
+{{ template "footer" }}
+{{ end }}

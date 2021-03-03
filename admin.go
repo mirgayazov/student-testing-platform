@@ -57,3 +57,43 @@ func saveUserPosition(w  http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/accessСontrol", http.StatusSeeOther)
 	}
 }
+
+func adminRequests(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("templates/adminRequests.html","templates/header.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	
+	res, err := db.Query("SELECT * FROM course_requests")
+	if err != nil {
+		panic(err)
+	}
+	requests := []Request{}
+	for res.Next() {
+		var req Request
+		err = res.Scan(&req.ID, &req.TeacherName, &req.CourseName)
+		if err != nil {
+			panic(err)
+		}
+		requests = append(requests, req)
+	}
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	t.ExecuteTemplate(w, "adminRequests", struct{Info, Request interface{}}{info, requests});
+}
+
+func approveRequest(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL)
+}
+	

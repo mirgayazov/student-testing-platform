@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	_ "github.com/lib/pq"
+	"github.com/gorilla/mux"
 )
 
 func handleFunc() {
@@ -33,8 +34,16 @@ func handleFunc() {
 	http.HandleFunc("/testing", testing)
 	http.HandleFunc("/checkAndSaveTest", checkAndSaveTest)
 	//
+	http.HandleFunc("/createCourse", createCourse)
+	http.HandleFunc("/requestToСreateСourse", requestToСreateСourse)
+	//
+	http.HandleFunc("/adminRequests", adminRequests)
+	r := mux.NewRouter()
+    r.HandleFunc("/approveRequest", approveRequest)
+    r.HandleFunc("/", index)
+	//
 	http.HandleFunc("/saveUser", saveUser)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", r)
 }
 
 func main() {

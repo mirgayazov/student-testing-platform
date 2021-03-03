@@ -59,3 +59,41 @@ func saveQuestion(w  http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/questionsСontrol", http.StatusSeeOther)
 	}
 }
+
+func createCourse(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("templates/createCourse.html","templates/header.html","templates/footer.html")	
+
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	t.ExecuteTemplate(w, "createCourse", info)
+}
+
+func requestToСreateСourse(w http.ResponseWriter, r *http.Request) {
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	
+	insert, err := db.Query(fmt.Sprintf("INSERT INTO course_requests (teacher_name, course_name) VALUES('%s','%s')", getUserName(r), r.FormValue("courseName")))
+	if err != nil {
+		panic(err)
+	} else {
+		message := "Вы успешно отправили заявку!"
+		t, err := template.ParseFiles("templates/message.html","templates/footer.html")	
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+		}
+		t.ExecuteTemplate(w, "message", message)
+	}
+	defer insert.Close()	
+	
+}
