@@ -1,0 +1,55 @@
+{{ define "tizd" }}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://getbootstrap.com/docs/5.0/examples/cover/cover.css">
+        <link rel="stylesheet" href="static/css/slider.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <title>ТИЗД</title>
+    </head>
+<body>
+    <main class="px-3">
+        <div style="width: 400px; margin: auto; height: 800px;" >
+            <hr><h1>Бронирование</h1>
+            <form action="/tizd" method="POST">
+                <input type="text" title="Введите имя"  pattern="[A-Z]{1}[a-z]*|[А-Я]{1}[а-я]*" name="first_name" id="first_name" placeholder="Введите имя" class="form-control"><br>
+
+                <input type="text"  title="Введите фамилию" pattern="[A-Z]{1}[a-z]*|[А-Я]{1}[а-я]*" name="last_name" id="last_name" placeholder="Введите фамилию" class="form-control"><br>
+
+                <input type="email" title="Введите email" name="email" id="email" placeholder="Введите email" class="form-control"><br>
+
+                <input type="date"  title="Введите дату прибытия" name="date" id="date" placeholder="Введите дату прибытия" class="form-control"><br>
+
+                <input type="text"  title="Введите СНИЛС"  pattern="[1-9]{1}[0-9]{10}" name="date" id="date" placeholder="Введите СНИЛС" class="form-control"><br>
+
+                <input type="text"  title="Введите количество проживающих"  pattern="[1-7]{1}" name="date" id="date" placeholder="Введите количество проживающих" class="form-control"><br>
+
+                <input type="color"  title="Выберите цвет"  name="date" id="date" placeholder="Выберите цвет class="form-control"><br>
+
+                <input type="text"  title="Введите номер авто"  pattern="[АВЕКМНОРСТУХ]{1}[0-9]{3}[АВЕКМНОРСТУХ]{2}[0-9]{2,3}" name="date" id="date" placeholder="Введите номер авто" class="form-control"><br>
+
+                <input type="range"  title="Введите количетсво комнат"  name="count" id="count" placeholder="Введите количетсво комнат" class="form-control"> <output id="ong" for="count" style="margin-right: 200px;">5</output>
+                <script>
+                    $(function() {
+                    var el;
+                    $("#count").change(function() {
+                    el = $(this);
+                    el
+                    .next("#ong")
+                    .text(el.val());
+                    })
+                    .trigger('change');
+                    });
+                </script>
+                <br><hr>
+                <button class="btn btn-success">Забронировать</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
+{{ end }}      

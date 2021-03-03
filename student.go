@@ -5,7 +5,14 @@ import (
 	"net/http"
 	"html/template"
 	"database/sql"
+	"math/rand"
+	"time"
 )
+
+func random(min, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
+}
 
 func studentPanel(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/studentPanel.html","templates/header.html","templates/footer.html")	
@@ -61,7 +68,22 @@ func testing(w http.ResponseWriter, r *http.Request) {
 		i=i+1
 		//создал массив id-шников осталось рандомом достать 3 штуки и по id достать вопрос + ответ
 	}
-
+	//----------------------------------------------------------------------------
+	// fmt.Println(fmt.Sprintf("Длина массива idшников %d",len(ids)))
+	// fmt.Println(fmt.Sprintf("[%d,%d]",int(ids[0]),int(ids[len(ids)-1])))
+	// rndindxs := []int{}
+	// for i := 0; i < 3; i++ {
+	// 	for len(rndindxs) < i+1 {
+	// 		rndindx := random(int(ids[0]),int(ids[len(ids)-1]))
+	// 		for j := 0; j < len(rndindxs)+1; j++ {
+	// 			if rndindx != rndindxs[j] {
+	// 				rndindxs = append(rndindxs, rndindx)
+	// 				fmt.Println(rndindx)
+	// 			}
+	// 		}
+	// 	}
+	// }
+	//----------------------------------------------------------------------------
 	tasks2 = []Task{}
 	tasks2 = append(tasks2, tasks[0])
 	tasks2 = append(tasks2, tasks[4])

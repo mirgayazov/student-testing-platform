@@ -18,6 +18,8 @@ func handleFunc() {
 	http.HandleFunc("/logout", logout)
 	//
 	http.HandleFunc("/about", about)
+	http.HandleFunc("/tizd", tizd)
+
 	//
 	http.HandleFunc("/adminPanel", adminPanel)
 	http.HandleFunc("/accessСontrol", accessСontrol)

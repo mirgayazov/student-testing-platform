@@ -8,6 +8,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func tizd(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("templates/tizd.html")
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+	t.ExecuteTemplate(w, "tizd", nil)	
+}
+
 func index(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("templates/index.html","templates/header.html","templates/footer.html")
 	if err != nil {
