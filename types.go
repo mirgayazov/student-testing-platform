@@ -32,10 +32,11 @@ type User struct {
 //Request .....
 type Request struct {
 	ID uint16
-	TeacherName, CourseName string
+	TeacherName, CourseName, Codeword string
 }
 
 //Course .....
 type Course struct {
+	ID uint16
 	CourseName string
 }

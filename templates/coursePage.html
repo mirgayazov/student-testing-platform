@@ -1,0 +1,11 @@
+{{ define "coursePage" }}
+{{ template "header" .Info }}
+<main class="px-3"><hr>
+    <h1>{{ .CourseName }}</h1>
+    {{ range .Course }}
+        <hr>
+        <a href="/{{ .CourseName }}" class="btn btn-outline-info">{{ .CourseName }}</a>
+    {{ end }}
+</main>
+{{ template "footer" }}
+{{ end }}

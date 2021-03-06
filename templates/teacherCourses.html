@@ -4,7 +4,7 @@
     <h1>Мои курсы</h1>
     {{ range .Course }}
         <hr>
-        <h2>-> {{ .CourseName }}</h2>
+        <a href="/course/{{ .ID }}" class="btn btn-outline-info">{{ .CourseName }}</a>
     {{ end }}
 </main>
 {{ template "footer" }}

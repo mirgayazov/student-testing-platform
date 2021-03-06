@@ -8,8 +8,11 @@ import (
 )
 
 func handleFunc() {
+	// http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+
 	r := mux.NewRouter()
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	s := http.StripPrefix("/static/", http.FileServer(http.Dir("./static/")))
+    r.PathPrefix("/static/").Handler(s)
 	//
 	r.HandleFunc("/", index)
 	//
@@ -40,7 +43,11 @@ func handleFunc() {
 	r.HandleFunc("/adminRequests", adminRequests)
     r.HandleFunc("/approveRequest/{id:[0-9]+}", approveRequest)
 	r.HandleFunc("/rejectRequest/{id:[0-9]+}", rejectRequest)
+	r.HandleFunc("/course/{id:[0-9]+}", course)
 	r.HandleFunc("/teacherCourses", teacherCourses)
+	//
+	r.HandleFunc("/courseOverview", courseOverview)
+	r.HandleFunc("/findCourse", findCourse)
 	//
 	r.HandleFunc("/saveUser", saveUser)
 	http.ListenAndServe(":8080", r)

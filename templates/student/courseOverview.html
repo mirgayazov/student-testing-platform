@@ -1,0 +1,82 @@
+{{ define "courseOverview" }}
+{{ template "header" .Info }}
+<main class="px-3"><hr>
+    <h1>Доступные курсы</h1>
+    
+    <form action="/findCourse" method="POST" style="margin-top: 25px;">
+            <input type="text" name="courseOrTeacherName" id="courseOrTeacherName" placeholder="Название курса или имя преподавателя" class="form-control" style="width: 330px; display: inline-block; vertical-align: middle; ">
+        <button class="btn btn-outline-warning" style="vertical-align: middle;">Найти</button>
+    </form><br>
+
+    <script src="/static/js/subscribe.js"></script>
+    <style>body {font-family: Arial, Helvetica, sans-serif;}
+        * {box-sizing: border-box;}
+        
+        .form-popup {
+          display: none;
+          position: fixed;
+          bottom: 0;
+          right: 15px;
+          border: 3px solid #f1f1f1;
+          z-index: 9;
+          
+        }
+        
+        .form-container {
+          max-width: 300px;
+          padding: 10px;
+          background-color: white;
+          
+        }
+        
+        .form-container input[type=text], .form-container input[type=password] {
+          width: 100%;
+          padding: 15px;
+          margin: 5px 0 22px 0;
+          border: none;
+          background: #f1f1f1;
+        }
+        
+        .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+          background-color: #ddd;
+          outline: none;
+        }
+        
+        .form-container .btn {
+          background-color: #1976D2;
+          color: white;
+          padding: 16px 20px;
+          border: none;
+          cursor: pointer;
+          width: 100%;
+          margin-bottom:10px;
+          opacity: 0.8;
+          font-size: 15px;
+          font-weight: bold;
+        }
+        
+        .form-container .cancel {
+          background-color: #448AFF;
+        }
+        
+        .form-container .btn:hover, .open-button:hover {
+          opacity: 1;
+        }</style>
+
+    {{ range .Course }}
+        <hr>
+        <a href="/course/{{ .ID }}" class="btn btn-outline-info">{{ .CourseName }}</a>
+
+        <button class="open-button" onclick="openForm()">Подпишитесь</button>
+        <div class="form-popup" id="myForm">
+            <form action="#" class="form-container">
+                <h1 style="color: black;">Подписаться {{ .CourseName }}</h1>
+                <input type="text" placeholder="Кодовое слово" name="name" required>
+                <button type="submit" class="btn">Отправить</button>
+                <button type="button" class="btn cancel" onclick="closeForm()">Закрыть</button>
+            </form>
+        </div>
+    {{ end }}
+</main>
+{{ template "footer" }}
+{{ end }}

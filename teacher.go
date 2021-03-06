@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"html/template"
+	s "strings"
 	"database/sql"
 )
 
@@ -83,7 +84,7 @@ func requestToСreateСourse(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	
-	insert, err := db.Query(fmt.Sprintf("INSERT INTO course_requests (teacher_name, course_name) VALUES('%s','%s')", getUserName(r), r.FormValue("courseName")))
+	insert, err := db.Query(fmt.Sprintf("INSERT INTO course_requests (teacher_name, course_name, codeword) VALUES('%s','%s', '%s')", getUserName(r), r.FormValue("courseName"), r.FormValue("codeword")))
 	if err != nil {
 		panic(err)
 	} else {
@@ -115,14 +116,14 @@ func teacherCourses(w http.ResponseWriter, r *http.Request) {
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
 
-	res, err := db.Query(fmt.Sprintf("SELECT course_name FROM courses where teacher_name='%s'",info.UserName))
+	res, err := db.Query(fmt.Sprintf("SELECT id, course_name FROM courses where teacher_name='%s'",info.UserName))
 	if err != nil {
 		panic(err)
 	}
 	courses := []Course{}
 	for res.Next() {
 		var course Course
-		err = res.Scan(&course.CourseName)
+		err = res.Scan(&course.ID, &course.CourseName)
 		if err != nil {
 			panic(err)
 		}
@@ -131,4 +132,14 @@ func teacherCourses(w http.ResponseWriter, r *http.Request) {
 	defer res.Close()
 
 	t.ExecuteTemplate(w, "teacherCourses", struct{Info, Course interface{}}{info, courses});
+}
+
+func course(w http.ResponseWriter, r *http.Request) {
+	id := s.Replace(fmt.Sprint(r.URL), "/course/", "", -1)
+	message := id
+	t, err := template.ParseFiles("templates/message.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+	t.ExecuteTemplate(w, "message", message)
 }

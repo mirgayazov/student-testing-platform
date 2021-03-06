@@ -131,3 +131,76 @@ func checkAndSaveTest(w  http.ResponseWriter, r *http.Request) {
 	}
 	t.ExecuteTemplate(w, "message", message)
 }
+
+func courseOverview(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("templates/student/courseOverview.html","templates/header.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	res, err := db.Query("SELECT id, course_name FROM courses")
+	if err != nil {
+		panic(err)
+	}
+	courses := []Course{}
+	for res.Next() {
+		var course Course
+		err = res.Scan(&course.ID, &course.CourseName)
+		if err != nil {
+			panic(err)
+		}
+		courses = append(courses, course)
+	}
+	defer res.Close()
+
+	t.ExecuteTemplate(w, "courseOverview", struct{Info, Course interface{}}{info, courses});
+}
+
+func findCourse(w http.ResponseWriter, r *http.Request) {
+	courseOrTeacherName := r.FormValue("courseOrTeacherName")
+	
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+	percent :="%"
+	res, err := db.Query(fmt.Sprintf("SELECT id, course_name FROM courses where course_name similar to '%s%s' or teacher_name='%s'",courseOrTeacherName, percent, courseOrTeacherName))
+	if err != nil {
+		panic(err)
+	}
+	courses := []Course{}
+	for res.Next() {
+		var course Course
+		err = res.Scan(&course.ID, &course.CourseName)
+		if err != nil {
+			panic(err)
+		}
+		courses = append(courses, course)
+	}
+	defer res.Close()
+
+	t, err := template.ParseFiles("templates/student/courseOverview.html","templates/header.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+	t.ExecuteTemplate(w, "courseOverview", struct{Info, Course interface{}}{info, courses});
+}
