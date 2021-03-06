@@ -40,3 +40,8 @@ type Course struct {
 	ID uint16
 	CourseName string
 }
+
+//Correctcodeword .....
+type Correctcodeword struct {
+	value string
+}

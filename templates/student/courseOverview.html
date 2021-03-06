@@ -65,13 +65,14 @@
 
     {{ range .Course }}
         <hr>
-        <a href="/course/{{ .ID }}" class="btn btn-outline-info">{{ .CourseName }}</a>
+        <a href="#" class="btn btn-outline-info">{{ .CourseName }}</a>
 
-        <button class="open-button" onclick="openForm()">Подпишитесь</button>
+        <button class="open-button" title="Желаете подписаться?" onclick="openForm({{ .ID }}, {{ .CourseName }})" style="color: black;"><img src="https://img.icons8.com/fluent-systems-filled/24/000000/subscription.png"/></button>
         <div class="form-popup" id="myForm">
-            <form action="#" class="form-container">
-                <h1 style="color: black;">Подписаться {{ .CourseName }}</h1>
-                <input type="text" placeholder="Кодовое слово" name="name" required>
+            <form action="/checkCodeword" class="form-container">
+                <h5 style="color: black;" id="label" >Подписаться</h5>
+                <input type="text" placeholder="Кодовое слово" name="codeword" id="codeword" required>
+                <input type="text" value="" name="courseID" id="courseID" style="display: none;" required>
                 <button type="submit" class="btn">Отправить</button>
                 <button type="button" class="btn cancel" onclick="closeForm()">Закрыть</button>
             </form>

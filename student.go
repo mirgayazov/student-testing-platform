@@ -204,3 +204,49 @@ func findCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	t.ExecuteTemplate(w, "courseOverview", struct{Info, Course interface{}}{info, courses});
 }
+
+func checkCodeword(w http.ResponseWriter, r *http.Request) {
+	codeword := r.FormValue("codeword")
+	id := r.FormValue("courseID")
+
+	// --> берем из бд кодовое слово по id курса - cравниваем
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	res, err := db.Query(fmt.Sprintf("SELECT codeword FROM courses where id='%s'", id))
+	if err != nil {
+		panic(err)
+	}
+
+	var correctcodeword Correctcodeword
+	for res.Next() {
+		err = res.Scan(&correctcodeword.value)
+		if err != nil {
+			panic(err)
+		}
+	}
+	defer res.Close()
+
+	if correctcodeword.value == codeword {
+		message := "Вы успешно подписались на курс!"
+		t, err := template.ParseFiles("templates/course_subscribe_message.html","templates/footer.html")	
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+		}
+		status := "correctcodeword"
+		t.ExecuteTemplate(w, "course_subscribe_message", struct{Message, Status interface{}}{message, status});
+	} else {
+		message := "Неверное кодовое слово :("
+		t, err := template.ParseFiles("templates/course_subscribe_message.html","templates/footer.html")	
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+		}
+		status := "invalidcodeword"
+		t.ExecuteTemplate(w, "course_subscribe_message", struct{Message, Status interface{}}{message, status});
+	}
+	//берем из бд кодовое слово по id курса - cравниваем <--
+}

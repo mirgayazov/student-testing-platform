@@ -48,6 +48,7 @@ func handleFunc() {
 	//
 	r.HandleFunc("/courseOverview", courseOverview)
 	r.HandleFunc("/findCourse", findCourse)
+	r.HandleFunc("/checkCodeword", checkCodeword)
 	//
 	r.HandleFunc("/saveUser", saveUser)
 	http.ListenAndServe(":8080", r)
