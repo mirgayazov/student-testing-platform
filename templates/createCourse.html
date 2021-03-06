@@ -1,11 +1,15 @@
 {{ define "createCourse" }}
 {{ template "header" . }}
 <main class="px-3"><hr>
+    <script src="/static/js/сancel_codeword.js"></script>
     <h1>Создание курса</h1>  
         <form action="/requestToСreateСourse" method="POST">
             <input type="text" name="courseName" id="courseName" placeholder="Название курса" class="form-control"><br>
-            <input type="text" name="codeword" id="codeword" placeholder="Кодовое слово для записи на курс" class="form-control"><br>
-            <button class="btn btn-outline-warning" style="margin-top: 15px;">Отправить заявку</button>
+            <input type="text" name="codeword" id="codeword" placeholder="Кодовое слово для записи на курс" class="form-control" style="width: 478px; display: inline-block; vertical-align: middle;">
+            <button type="button" onclick="addCodeword()" class="btn btn-outline-success" style=" display: none; vertical-align: middle; " id="addCodewordButton" > Назначить кодовое слово </button>
+            <button type="button" onclick="deleteCodeword()" class="btn btn-outline-danger" style=" display: inline-block; vertical-align: middle;" id="deleteCodewordButton"> Не требуется </button>
+            <br>
+            <button type="submit" class="btn btn-outline-warning" style="margin-top: 25px;">Отправить заявку</button>
         </form>   
 </main>
 {{ template "footer" }}
