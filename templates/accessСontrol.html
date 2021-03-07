@@ -1,8 +1,9 @@
 {{ define "accessСontrol" }}
 {{ template "header" . }}
 <main class="px-3"><hr>
-    <h1>Управление доступом</h1>  
-        <form action="/saveUserPosition" method="POST">
+    <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
+        <form action="/saveUserPosition" method="POST" style="width: 400px; margin: auto auto;">
+            <br><h3>Управление доступом</h3>  
             <input type="text" name="user_name" id="user_name" placeholder="Имя пользователя" class="form-control"><br>
             <select required name="position" id="position" placeholder="Выберите уровень доступа" class="form-control">
                 <option selected  disabled>Сменить уровень доступа</option>
@@ -11,7 +12,8 @@
                 <option value="admin">Администратор</option>
                 </select>
             <button class="btn btn-outline-warning" style="margin-top: 15px;">Сохранить</button>
-        </form>   
+        </form><br>  
+    </div><hr>
 </main>
 {{ template "footer" }}
 {{ end }}

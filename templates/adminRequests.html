@@ -4,9 +4,13 @@
     <h1>Заявки</h1>  
     {{ range .Request }}
         <hr>
-        <h3>{{ .TeacherName}} хочет создать курс под названием "{{ .CourseName }}"</h3>
-        <a class="btn btn-outline-success" href="/approveRequest/{{ .ID }}">Одобрить</a><br>
-        <a class="btn btn-outline-danger" href="/rejectRequest/{{ .ID }}" style="margin-top: 10px;">Отклонить</a><br>
+        <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
+            <div class="card-body">
+                <h3>{{ .TeacherName}} хочет создать курс под названием "{{ .CourseName }}"</h3><hr>
+                <a class="btn btn-success" href="/approveRequest/{{ .ID }}">Одобрить</a>
+                <a class="btn btn-danger" href="/rejectRequest/{{ .ID }}">Отклонить</a><br>
+            </div>
+        </div>
     {{ end }}
 </main>
 {{ template "footer" }}
