@@ -4,9 +4,24 @@
     {{ if eq .UserPosition "teacher" }}
         <h2>Здравствуйте {{ .UserName }}!</h2><br>
     {{ end }}
-    <a class="btn btn-outline-warning" href="/questionsСontrol">Управление базой вопросов</a><br>
-    <a class="btn btn-outline-warning" href="/createCourse" style="margin-top: 10px;">Создать курс</a><br>
-    <a class="btn btn-outline-warning" href="/teacherCourses" style="margin-top: 10px;">Мои курсы</a><br>
+    <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
+        <div class="card-body">
+          <a class="btn btn-outline-warning" href="/questionsСontrol">Управление базой вопросов</a><hr>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </div><hr>
+    <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
+        <div class="card-body">
+          <a class="btn btn-outline-warning" href="/createCourse" >Создать курс<a><hr>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </div><hr>
+    <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
+        <div class="card-body">
+          <a class="btn btn-outline-warning" href="/teacherCourses" >Мои курсы</a><hr>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </div>
 </main>
 {{ template "footer" }}
 {{ end }}

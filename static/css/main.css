@@ -1,0 +1,4 @@
+.carousel-caption {
+    color: white; 
+    text-shadow: 3px 0 3px #000, 0 3px 3px #000, -3px 0 3px #000, 0 -3px 3px #000;
+}
