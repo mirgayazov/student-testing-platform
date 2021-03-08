@@ -50,3 +50,13 @@ type Correctcodeword struct {
 type ID struct {
 	value string
 }
+
+//Subscribers .....
+type Subscribers struct {
+	Values []uint8
+}
+
+//Student .....
+type Student struct {
+	LastName, FirstName string
+}
