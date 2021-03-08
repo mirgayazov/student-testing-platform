@@ -20,7 +20,7 @@
                   </svg>  {{ .LastName }} {{ .FirstName }}</h2>
                 {{ end }}
             </div>
-            <h6>(всего подписанных - {{ .Count }})</h6>
+            <h6>(всего участников - {{ .Count }})</h6>
         </div><hr style="margin: 0 0 0 0;">
         <p>Здесь вы можете просмотреть весь список студентов, подписанных на курс.</p>
     </div><hr>
@@ -34,15 +34,20 @@
               </svg></button> <button style="display: none;" id="dontShowDataButton" onclick="DontShowData()" class="btn btn-danger"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
                 <path d="M10.79 12.912l-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7.027 7.027 0 0 0 2.79-.588zM5.21 3.088A7.028 7.028 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474L5.21 3.088z"/>
                 <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829l-2.83-2.829zm4.95.708l-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6l-12-12 .708-.708 12 12-.708.707z"/>
-              </svg></button> </h3>
+              </svg></button> <a class="btn btn-primary" href="/addCourseQuestion/{{ .CourseID }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+              </svg></a></h3>
             <div id="Data" style="display: none;">
                 {{ range .Tasks }}
-                <h4 >{{ .Index }}: {{ .Question }} <-> {{ .Answer }}</h2><hr>
+                <hr><h4 id="DataItem{{ .ID }}">{{ .Index }}: {{ .Question }}  {{ .Answer }} <a class="btn btn-outline-danger"  title="Удалить вопрос" onclick="DeleteQuestion({{ .ID }})" href="/deleteQuestion/{{ .ID }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                  </svg></a></h2>
                 {{ end }}
             </div>
-            <h6>(количество вопросов - {{ .TaskCount }})</h6>
+           
         </div><hr style="margin: 0 0 0 0;">
-        <p>Здесь вы можете просмотреть всю базу вопросов по данному курсу.</p>
+        <p>Здесь вы можете просмотреть всю базу вопросов по данному курсу (количество вопросов - {{ .TaskCount }}).</p>
     </div>
 </main>
 {{ template "footer" }}

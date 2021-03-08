@@ -21,3 +21,7 @@ function DontShowData() {
     document.getElementById("dontShowDataButton").style.display = "none";
     document.getElementById("ShowDataButton").style.display = "inline-block";
 }
+
+function DeleteQuestion(id) {
+    document.getElementById("DatItem"+id).style.display = "none";
+}

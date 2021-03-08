@@ -217,5 +217,51 @@ func course(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	t.ExecuteTemplate(w, "coursePage", struct{Info, Students, Count, Tasks, TaskCount, CourseName interface{}}{info, students, count, tasks, taskCount, courseName});
+	t.ExecuteTemplate(w, "coursePage", struct{Info, Students, Count, Tasks, TaskCount, CourseName, CourseID interface{}}{info, students, count, tasks, taskCount, courseName, id});
+}
+
+func deleteQuestion(w http.ResponseWriter, r *http.Request) {
+	id := s.Replace(fmt.Sprint(r.URL), "/deleteQuestion/", "", -1)
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	db.Query(fmt.Sprintf("delete from questions where id='%s'",id))
+	http.Redirect(w, r, r.Header.Get("Referer"), 302)
+}
+
+func addCourseQuestion(w http.ResponseWriter, r *http.Request) {
+	id := s.Replace(fmt.Sprint(r.URL), "/addCourseQuestion/", "", -1) //id курса
+	t, err := template.ParseFiles("templates/header.html","templates/addCourseQuestion.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+	t.ExecuteTemplate(w, "addCourseQuestion", struct{Info, CourseID interface{}}{info, id});
+}
+
+func saveCourseQuestion(w http.ResponseWriter, r *http.Request) {
+	question := r.FormValue("question")
+	answer := r.FormValue("answer")
+	topic := r.FormValue("topic")
+	courseID := r.FormValue("courseid")
+
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	insert, err := db.Query(fmt.Sprintf("INSERT INTO questions (question, answer, course_id, topic) VALUES('%s','%s','%s','%s')", question, answer, courseID, topic))
+	if err != nil {
+		panic(err)
+	}
+	defer insert.Close()
+	http.Redirect(w, r, r.Header.Get("Referer"), 302)
 }
