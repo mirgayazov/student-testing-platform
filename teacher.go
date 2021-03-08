@@ -137,6 +137,7 @@ func teacherCourses(w http.ResponseWriter, r *http.Request) {
 func course(w http.ResponseWriter, r *http.Request) {
 	id := s.Replace(fmt.Sprint(r.URL), "/course/", "", -1)
 	message := id
+	
 	t, err := template.ParseFiles("templates/message.html","templates/footer.html")	
 	if err != nil {
 		fmt.Fprintf(w, err.Error())

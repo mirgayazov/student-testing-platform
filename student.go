@@ -207,7 +207,7 @@ func findCourse(w http.ResponseWriter, r *http.Request) {
 
 func checkCodeword(w http.ResponseWriter, r *http.Request) {
 	codeword := r.FormValue("codeword")
-	id := r.FormValue("courseID")
+	courseID := r.FormValue("courseID")
 
 	// --> берем из бд кодовое слово по id курса - cравниваем
 	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
@@ -217,7 +217,7 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	res, err := db.Query(fmt.Sprintf("SELECT codeword FROM courses where id='%s'", id))
+	res, err := db.Query(fmt.Sprintf("SELECT codeword FROM courses where id='%s'", courseID))
 	if err != nil {
 		panic(err)
 	}
@@ -239,6 +239,21 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 		}
 		status := "correctcodeword"
 		t.ExecuteTemplate(w, "course_subscribe_message", struct{Message, Status interface{}}{message, status});
+		//добавление в подписичики курса -->
+		res, err := db.Query(fmt.Sprintf("select id from users where user_name='%s'",getUserName(r)))
+		if err != nil {
+			panic(err)
+		}
+		var userID ID
+		for res.Next() {
+			err = res.Scan(&userID.value)
+			if err != nil {
+				panic(err)
+			}
+		}
+		defer res.Close()
+		db.Query(fmt.Sprintf("UPDATE courses SET subscribers = array_append((select subscribers from courses where id='%s') , '%s') WHERE id='%s';", courseID, userID.value, courseID))
+		//добавление в подписичики курса <--
 	} else {
 		message := "Неверное кодовое слово :("
 		t, err := template.ParseFiles("templates/course_subscribe_message.html","templates/footer.html")	

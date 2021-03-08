@@ -45,3 +45,8 @@ type Course struct {
 type Correctcodeword struct {
 	value string
 }
+
+//ID .....
+type ID struct {
+	value string
+}

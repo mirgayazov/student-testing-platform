@@ -155,7 +155,7 @@ func rejectRequest(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(req)
+		// fmt.Println(req)
 	}
 	defer res.Close()
 	db.Query(fmt.Sprintf("delete from course_requests where id='%s'", id))
