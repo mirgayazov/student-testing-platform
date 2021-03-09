@@ -344,7 +344,73 @@ func createTest(w http.ResponseWriter, r *http.Request) {
 }
 
 func saveNewTest(w http.ResponseWriter, r *http.Request) {
-	courseID := r.FormValue("myid")
-	fmt.Println(courseID)//достал id курса
+	courseID := r.FormValue("myid")//достал id курса
+	testName := r.FormValue("testName")
 
+	//--------------------------------------------------------
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	//--------------------------------------------------------
+	//берем из базы уникальные топики
+	res, err := db.Query(fmt.Sprintf("SELECT distinct topic FROM questions where course_id='%s'",courseID))
+	if err != nil {
+		panic(err)
+	}
+	defer res.Close()
+
+	topics :=[]string{}
+	for res.Next() {
+		var topic string
+		err = res.Scan(&topic)
+		if err != nil {
+			panic(err)
+		}
+		// fmt.Println(topic)
+		topics = append(topics, topic)
+	}
+	topicCount := len(topics)
+	topicCounters := []int16{}
+	Topics := []Topic{}
+	for i := 0; i < topicCount; i++ {
+       res, err := db.Query(fmt.Sprintf("select count(topic) from questions where topic='%s'", topics[i]))
+	   if err != nil {
+		    panic(err)
+		}
+		var topicCounter int16
+		for res.Next() {
+			err = res.Scan(&topicCounter)
+			if err != nil {
+				panic(err)
+			}
+			var topic Topic
+			topic.MaxValue = topicCounter
+			topic.Name = topics[i]
+			Topics = append(Topics, topic)
+			topicCounters = append(topicCounters, topicCounter)
+		}
+    }
+	topicsQuestionsCount := []string{}
+	for i := 0; i < len(Topics); i++ {
+		var topicQuestionsCount string
+		topicQuestionsCount = r.FormValue("name_"+Topics[i].Name)
+		topicsQuestionsCount = append(topicsQuestionsCount, topicQuestionsCount)
+	}
+	//--------------------------------------------------------
+	insert, err := db.Query(fmt.Sprintf("INSERT INTO tests (test_name, course_id) VALUES('%s','%s')", testName, courseID))
+	if err != nil {
+		panic(err)
+	}
+	defer insert.Close()
+
+	for i := 0; i < len(Topics); i++ {
+		db.Query(fmt.Sprintf("UPDATE tests SET topics = array_append((select topics from tests where test_name='%s') , '%s') WHERE test_name='%s';", testName, Topics[i].Name, testName))
+		
+		db.Query(fmt.Sprintf("UPDATE tests SET questions_count = array_append((select questions_count from tests where test_name='%s') , '%s') WHERE test_name='%s';", testName, topicsQuestionsCount[i], testName))
+	}
+
+	http.Redirect(w, r, r.Header.Get("Referer"), 302)
 }

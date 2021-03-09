@@ -3,11 +3,33 @@
 <main class="px-3"><hr>
     <div class="card" style="width: 38rem; margin: auto auto; background-color: rgb(84, 87, 90); display: inline-block;" >
         <form action="/saveNewTest" method="POST" style="width: 600px; margin: auto auto; ">
-            <br><h1>Генерация теста</h1><br>
-            <input style="opacity: 0; width: 1px;" type="text" value="{{ .CourseID }}" name="myid" id="myid">
-            {{ range .Topics }}
-                <h3 style="display: inline-block;" >{{ .Name }}</h3> <input class="form-control" style="display: inline-block; width: 200px;" type="text" id="{{ . }}" placeholder="Количество вопросов"> <h6 style="display: inline-block;">     (max: {{ .MaxValue }}) </h6> <hr>
-            {{ end }}
+            <br><h2>Генерация теста</h2><br>
+            <input style="display: none;" type="text" value="{{ .CourseID }}" name="myid" id="myid">
+            <table style="margin: auto; border-spacing: 5px 5px;" border="1">
+                <tr style="padding: 10px 0;">
+                    <td style="padding:10px">Название </td>
+                    <td style="padding:10px"> <input required class="form-control" style="display: inline-block; width: 200px;" type="text" name="testName" id="testName" placeholder="Название теста"></td>
+                    <td style="padding:10px; background: linear-gradient(45deg, rgba(0, 0, 0, 0) 49.9%, rgb(19, 22, 19) 49.9%, rgb(22, 24, 22) 60%, rgba(0, 0, 0, 0) 60%) 
+                    fixed,
+                    linear-gradient(45deg, rgb(22, 24, 22) 10%, rgba(0, 0, 0, 0) 10%) 
+                    fixed;
+                    background-size: 0.5em 0.5em"> </td>
+                </tr>
+                <tr style="padding: 10px 0;">
+                    <td style="padding:10px">Тема</td>
+                    <td style="padding:10px">Количество вопросов</td>
+                    <td style="padding:10px">Всего вопросов в теме</td>
+                </tr>
+                {{ range .Topics }}
+                <tr style="padding: 10px 0;">
+                    <td style="padding:10px">{{ .Name }}</td>
+                    <td style="padding:10px"><input class="form-control" style="display: inline-block; width: 200px;" type="text"  name="name_{{ .Name }}" id="name_{{ .Name }}" placeholder="" required></td>
+                    <td> <button type="button" class="btn btn-info">{{ .MaxValue }}</button></td>
+                </tr>
+                <!-- <h3 style="display: inline-block;" >{{ .Name }}</h3>  <h6 style="display: inline-block;">     </h6> <hr> -->
+                 {{ end }}
+            </table><br>
+           
             <button class="btn btn-outline-warning" >Сгенерировать</button><hr>
             <a href="/course/{{ .CourseID }}">Перейти к курсу</a>
         </form><br>
