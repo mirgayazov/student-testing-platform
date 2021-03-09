@@ -43,7 +43,7 @@ type Request struct {
 
 //Course .....
 type Course struct {
-	ID uint16
+	ID int64
 	CourseName string
 }
 

@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"math/rand"
 	"time"
+	"strconv"
 )
 
 func random(min, max int) int {
@@ -253,6 +254,12 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 		}
 		defer res.Close()
 		db.Query(fmt.Sprintf("UPDATE courses SET subscribers = array_append((select subscribers from courses where id='%s') , '%s') WHERE id='%s';", courseID, userID.value, courseID))
+
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO student_courses (student_name, course_id) VALUES('%s','%s')", getUserName(r), courseID))
+		if err != nil {
+			panic(err)
+		}
+		defer insert.Close()
 		//добавление в подписичики курса <--
 	} else {
 		message := "Неверное кодовое слово :("
@@ -264,4 +271,66 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 		t.ExecuteTemplate(w, "course_subscribe_message", struct{Message, Status interface{}}{message, status});
 	}
 	//берем из бд кодовое слово по id курса - cравниваем <--
+}
+
+func studentCourses(w http.ResponseWriter, r *http.Request) {
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	courseIDS := []string{}
+	corses := []Course{}
+	res, err := db.Query(fmt.Sprintf("select course_id from student_courses where student_name='%s'",getUserName(r)))
+	if err != nil {
+		panic(err)
+	}
+	var courseID string
+	var course Course
+	for res.Next() {
+		err = res.Scan(&courseID)
+		if err != nil {
+			panic(err)
+		}
+		courseIDS = append(courseIDS, courseID)
+	}
+	defer res.Close()
+
+	var courseName string
+	for i := 0; i < len(courseIDS); i++ {
+		res, err := db.Query(fmt.Sprintf("select course_name from courses where id='%s'", courseIDS[i]))
+		if err != nil {
+			panic(err)
+		}
+		for res.Next() {
+			err = res.Scan(&courseName)
+			if err != nil {
+				panic(err)
+			}
+		}
+		defer res.Close()
+		
+
+		parsedID, err := strconv.ParseInt(courseIDS[i], 0, 16)
+		if err != nil {
+			panic(err)
+		}
+		course.CourseName =courseName
+		course.ID = parsedID
+		
+		corses = append(corses, course)
+	}
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	t, err := template.ParseFiles("templates/header.html","templates/studentCourses.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+	t.ExecuteTemplate(w, "studentCourses", struct{Info, Course interface{}}{info, corses});
 }

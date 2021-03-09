@@ -53,6 +53,8 @@ func handleFunc() {
 	r.HandleFunc("/addCourseQuestion/{id:[0-9]+}", addCourseQuestion)
 	r.HandleFunc("/saveCourseQuestion", saveCourseQuestion)
 	//
+	r.HandleFunc("/studentCourses", studentCourses)
+	//
 	r.HandleFunc("/course/{id:[0-9]+}/createTest", createTest)
 	r.HandleFunc("/saveNewTest", saveNewTest)
 	//
