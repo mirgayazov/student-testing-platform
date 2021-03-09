@@ -53,6 +53,9 @@ func handleFunc() {
 	r.HandleFunc("/addCourseQuestion/{id:[0-9]+}", addCourseQuestion)
 	r.HandleFunc("/saveCourseQuestion", saveCourseQuestion)
 	//
+	r.HandleFunc("/course/{id:[0-9]+}/createTest", createTest)
+	r.HandleFunc("/saveNewTest", saveNewTest)
+	//
 	r.HandleFunc("/saveUser", saveUser)
 	http.ListenAndServe(":8080", r)
 }

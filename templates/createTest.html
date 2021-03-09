@@ -1,0 +1,17 @@
+{{ define "createTest" }}
+{{ template "header" .Info }}
+<main class="px-3"><hr>
+    <div class="card" style="width: 38rem; margin: auto auto; background-color: rgb(84, 87, 90); display: inline-block;" >
+        <form action="/saveNewTest" method="POST" style="width: 600px; margin: auto auto; ">
+            <br><h1>Генерация теста</h1><br>
+            <input style="opacity: 0; width: 1px;" type="text" value="{{ .CourseID }}" name="myid" id="myid">
+            {{ range .Topics }}
+                <h3 style="display: inline-block;" >{{ .Name }}</h3> <input class="form-control" style="display: inline-block; width: 200px;" type="text" id="{{ . }}" placeholder="Количество вопросов"> <h6 style="display: inline-block;">     (max: {{ .MaxValue }}) </h6> <hr>
+            {{ end }}
+            <button class="btn btn-outline-warning" >Сгенерировать</button><hr>
+            <a href="/course/{{ .CourseID }}">Перейти к курсу</a>
+        </form><br>
+    </div>
+</main>
+{{ template "footer" }}
+{{ end }}

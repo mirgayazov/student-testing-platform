@@ -45,10 +45,16 @@
                   </svg></a></h2>
                 {{ end }}
             </div>
-           
         </div><hr style="margin: 0 0 0 0;">
         <p>Здесь вы можете просмотреть всю базу вопросов по данному курсу (количество вопросов - {{ .TaskCount }}).</p>
-    </div>
+    </div><hr>
+    <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
+      <div class="card-body">
+          <script src="/static/js/showStudentsForTeacher.js"></script>
+          <a href="/course/{{ .CourseID }}/createTest" class="btn btn-primary">Создать тест</a>
+      </div><hr style="margin: 0 0 0 0;">
+      <p>Здесь вы можете генерировать тесты.</p>
+  </div><hr>
 </main>
 {{ template "footer" }}
 {{ end }}

@@ -11,6 +11,12 @@ type Task struct {
 	Question, Answer string
 }
 
+//Topic .....
+type Topic struct {
+	MaxValue int16
+	Name string
+}
+
 //Article ....
 type Article struct {
 	ID uint16

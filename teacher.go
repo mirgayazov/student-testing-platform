@@ -265,3 +265,86 @@ func saveCourseQuestion(w http.ResponseWriter, r *http.Request) {
 	defer insert.Close()
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)
 }
+
+func createTest(w http.ResponseWriter, r *http.Request) {
+	courseID := s.Replace(fmt.Sprint(r.URL), "/createTest", "", -1)
+	courseID =  s.Replace(courseID, "/course/", "", -1)
+	//--------------------------------------------------------
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	//--------------------------------------------------------
+	//берем из базы уникальные топики
+	res, err := db.Query(fmt.Sprintf("SELECT distinct topic FROM questions where course_id='%s'",courseID))
+	if err != nil {
+		panic(err)
+	}
+	defer res.Close()
+
+	topics :=[]string{}
+	for res.Next() {
+		var topic string
+		err = res.Scan(&topic)
+		if err != nil {
+			panic(err)
+		}
+		// fmt.Println(topic)
+		topics = append(topics, topic)
+	}
+	topicCount := len(topics)
+	topicCounters := []int16{}
+	Topics := []Topic{}
+	for i := 0; i < topicCount; i++ {
+       res, err := db.Query(fmt.Sprintf("select count(topic) from questions where topic='%s'", topics[i]))
+	   if err != nil {
+		    panic(err)
+		}
+		var topicCounter int16
+		for res.Next() {
+			err = res.Scan(&topicCounter)
+			if err != nil {
+				panic(err)
+			}
+			var topic Topic
+			topic.MaxValue = topicCounter
+			topic.Name = topics[i]
+			Topics = append(Topics, topic)
+			topicCounters = append(topicCounters, topicCounter)
+		}
+		
+	   fmt.Print(topics[i])
+	   fmt.Println(topicCounter)
+	   fmt.Println("=====")
+    }
+	fmt.Println(topicCounters)
+
+	//--------------------------------------------------------
+
+
+
+
+	//--------------------------------------------------------
+	//--------------------------------------------------------
+
+
+	//--------------------------------------------------------
+	//--------------------------------------------------------
+	t, err := template.ParseFiles("templates/header.html","templates/createTest.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+	t.ExecuteTemplate(w, "createTest", struct{Info, CourseID, Topics  interface{}}{info, courseID, Topics});
+}
+
+func saveNewTest(w http.ResponseWriter, r *http.Request) {
+	courseID := r.FormValue("myid")
+	fmt.Println(courseID)//достал id курса
+
+}
