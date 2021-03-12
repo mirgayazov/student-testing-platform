@@ -1,13 +1,18 @@
 {{ define "registration" }}
-{{ template "header" . }}
+{{ template "header" .Info }}
 <main class="px-3"><hr>
     <div class="card" style="width: 28rem; margin: auto auto; background-color: rgb(84, 87, 90); display: inline-block;" >
         <form action="/saveUser" method="POST" style="width: 400px; margin: auto auto;">
             <br><h1>Регистрация</h1>
-            <input type="text" name="first_name" id="first_name" placeholder="Введите имя" class="form-control"><br>
-            <input type="text" name="last_name" id="last_name" placeholder="Введите фамилию" class="form-control"><br>
-            <input type="text" name="user_name" id="user_name" placeholder="Имя пользователя" class="form-control"><br>
-            <input type="text" name="password" id="password" placeholder="Придумайте пароль" class="form-control"><br>
+            <input required type="text" name="first_name" id="first_name" placeholder="Введите имя" class="form-control"><br>
+            <input required type="text" name="last_name" id="last_name" placeholder="Введите фамилию" class="form-control"><br>
+            {{ if ne .Message "" }}
+                <div class="alert alert-danger" role="alert">
+                    {{ .Message }}
+                </div>
+            {{ end }}
+            <input required type="text" name="user_name" id="user_name" placeholder="Имя пользователя" class="form-control"><br>
+            <input required type="text" name="password" id="password" placeholder="Придумайте пароль" class="form-control"><br>
             <button class="btn btn-outline-success">Зарегистрироваться</button>
         </form><br>
     </div><hr>

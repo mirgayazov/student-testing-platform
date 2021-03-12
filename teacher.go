@@ -5,10 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"strings"
 	s "strings"
-
-	// "encoding/json"
 )
 
 func teacherPanel(w http.ResponseWriter, r *http.Request) {
@@ -176,25 +173,22 @@ func course(w http.ResponseWriter, r *http.Request) {
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
 
-	res, err = db.Query(fmt.Sprintf("SELECT array_to_json(subscribers) FROM courses where id='%s'",id))
+	res, err = db.Query(fmt.Sprintf("SELECT student_id FROM course_subscribers where course_id='%s'",id))
 	if err != nil {
 		panic(err)
 	}
-	var arrStr string
+
+	student_ids :=[]string{}
 	for res.Next() {
-		res.Scan(&arrStr)
-		arrStr = s.Replace(arrStr, "[", "", 1)
-		arrStr = s.Replace(arrStr, "]", "", 1)
-		// fmt.Println(arrStr)
+		var student_id string
+		res.Scan(&student_id)
+		student_ids =append(student_ids, student_id)
 	}
 	defer res.Close()
-	
 
 	students :=[]Student{}
-	identificators := strings.Split(arrStr, ",")
-	for _, identificator := range identificators {
-		// fmt.Println(identificator)
-		res, err := db.Query(fmt.Sprintf("SELECT last_name, first_name FROM users where id='%s'",identificator))
+	for _, student_id := range student_ids {
+		res, err := db.Query(fmt.Sprintf("SELECT last_name, first_name FROM users where id='%s'", student_id))
 		if err != nil {
 			panic(err)
 		}

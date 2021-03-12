@@ -290,7 +290,21 @@ func studentCourses(w http.ResponseWriter, r *http.Request) {
 
 	courseIDS := []string{}
 	corses := []Course{}
-	res, err := db.Query(fmt.Sprintf("select course_id from student_courses where student_name='%s'",getUserName(r)))
+
+	res, err := db.Query(fmt.Sprintf("select id from users where user_name='%s'",getUserName(r)))
+	if err != nil {
+		panic(err)
+	}
+	var userID string
+	for res.Next() {
+		err = res.Scan(&userID)
+		if err != nil {
+			panic(err)
+		}
+	}
+	defer res.Close()
+
+	res, err = db.Query(fmt.Sprintf("select course_id from course_subscribers where student_id='%s'",userID))
 	if err != nil {
 		panic(err)
 	}
