@@ -214,12 +214,14 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
+		fmt.Println("student.go 217")
 		panic(err)
 	}
 	defer db.Close()
 
 	res, err := db.Query(fmt.Sprintf("SELECT codeword FROM courses where id='%s'", courseID))
 	if err != nil {
+		fmt.Println("student.go 224")
 		panic(err)
 	}
 
@@ -253,9 +255,14 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		defer res.Close()
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO course_subscribers (student_id, course_id) VALUES('%s','%s')", userID.value, courseID))
+		if err != nil {
+			panic(err)
+		}
+		defer insert.Close()
 		db.Query(fmt.Sprintf("UPDATE courses SET subscribers = array_append((select subscribers from courses where id='%s') , '%s') WHERE id='%s';", courseID, userID.value, courseID))
 
-		insert, err := db.Query(fmt.Sprintf("INSERT INTO student_courses (student_name, course_id) VALUES('%s','%s')", getUserName(r), courseID))
+		insert, err = db.Query(fmt.Sprintf("INSERT INTO student_courses (student_name, course_id) VALUES('%s','%s')", getUserName(r), courseID))
 		if err != nil {
 			panic(err)
 		}

@@ -23,7 +23,7 @@
 <main class="px-3">
     <hr><h2>{{ .Message }}</h2><hr>
     {{ if eq .Status "correctcodeword" }} 
-        <a href="/courseOverview" class="btn btn-outline-info">Перейти к моим курсам</a>
+        <a href="/studentCourses" class="btn btn-outline-info">Перейти к моим курсам</a>
     {{ end }}
     {{ if eq .Status "invalidcodeword" }} 
         <a href="/courseOverview" class="btn btn-outline-danger">Попробуйте снова</a>

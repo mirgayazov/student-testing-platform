@@ -87,7 +87,21 @@ func requestToСreateСourse(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	
-	insert, err := db.Query(fmt.Sprintf("INSERT INTO course_requests (teacher_name, course_name, codeword) VALUES('%s','%s', '%s')", getUserName(r), r.FormValue("courseName"), r.FormValue("codeword")))
+	res, err := db.Query(fmt.Sprintf("SELECT id FROM users where user_name='%s'", getUserName(r)))
+	if err != nil {
+		panic(err)
+	}
+	var user_id string
+	for res.Next() {
+		err = res.Scan(&user_id)
+		if err != nil {
+			panic(err)
+		}
+	}
+	defer res.Close()
+
+
+	insert, err := db.Query(fmt.Sprintf("INSERT INTO course_requests (teacher_name, course_name, codeword, teacher_id) VALUES('%s','%s', '%s', '%s')", getUserName(r), r.FormValue("courseName"), r.FormValue("codeword"), user_id))
 	if err != nil {
 		panic(err)
 	} else {

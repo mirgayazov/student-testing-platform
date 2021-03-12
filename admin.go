@@ -79,7 +79,7 @@ func adminRequests(w http.ResponseWriter, r *http.Request) {
 	requests := []Request{}
 	for res.Next() {
 		var req Request
-		err = res.Scan(&req.ID, &req.TeacherName, &req.CourseName, &req.Codeword)
+		err = res.Scan(&req.ID, &req.TeacherName, &req.CourseName, &req.Codeword, &req.TeacherID)
 		if err != nil {
 			panic(err)
 		}
@@ -104,14 +104,14 @@ func approveRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	
-	res, err := db.Query(fmt.Sprintf("SELECT teacher_name, course_name, codeword FROM course_requests where id='%s'",id))
+	res, err := db.Query(fmt.Sprintf("SELECT teacher_name, course_name, codeword, teacher_id FROM course_requests where id='%s'",id))
 	if err != nil {
 		panic(err)
 	}
 	var req Request
 	for res.Next() {
 		req.ID = 0
-		err = res.Scan(&req.TeacherName, &req.CourseName, &req.Codeword)
+		err = res.Scan(&req.TeacherName, &req.CourseName, &req.Codeword, &req.TeacherID)
 		if err != nil {
 			panic(err)
 		}
@@ -120,7 +120,7 @@ func approveRequest(w http.ResponseWriter, r *http.Request) {
 	defer res.Close()
 	//в таблицу курсов добавляю пару курс-препод
 	courseNameWithTeacher :=  req.CourseName+"("+req.TeacherName+")"
-	insert, err := db.Query(fmt.Sprintf("INSERT INTO courses (course_name, teacher_name, codeword) VALUES('%s','%s', '%s')",courseNameWithTeacher, req.TeacherName, req.Codeword))
+	insert, err := db.Query(fmt.Sprintf("INSERT INTO courses (course_name, teacher_name, codeword, teacher_id) VALUES('%s','%s', '%s','%s')",courseNameWithTeacher, req.TeacherName, req.Codeword, req.TeacherID))
 	if err != nil {
 		panic(err)
 	} else {

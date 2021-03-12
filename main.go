@@ -62,6 +62,7 @@ func handleFunc() {
 	http.ListenAndServe(":8080", r)
 }
 
+
 func main() {
 	fmt.Println("Переход -> http://localhost:8080/")
 	handleFunc()
