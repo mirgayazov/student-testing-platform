@@ -112,6 +112,18 @@ func saveUser(w  http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func deleteUser(w http.ResponseWriter, r *http.Request) {
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	logout(w,r)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+	db.Query(fmt.Sprintf("delete from users where user_name='%s'", getUserName(r)))
+}
+
 func login(w http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("user_name")
 	password := []byte(r.FormValue("password"))

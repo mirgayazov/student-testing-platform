@@ -26,10 +26,8 @@
                     <td style="padding:10px"><input class="form-control" style="display: inline-block; width: 200px;" type="text"  name="name_{{ .Name }}" id="name_{{ .Name }}" placeholder="" required></td>
                     <td> <button type="button" class="btn btn-info">{{ .MaxValue }}</button></td>
                 </tr>
-                <!-- <h3 style="display: inline-block;" >{{ .Name }}</h3>  <h6 style="display: inline-block;">     </h6> <hr> -->
-                 {{ end }}
+                {{ end }}
             </table><br>
-           
             <button class="btn btn-outline-warning" >Сгенерировать</button><hr>
             <a href="/course/{{ .CourseID }}">Перейти к курсу</a>
         </form><br>

@@ -260,13 +260,6 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		defer insert.Close()
-		db.Query(fmt.Sprintf("UPDATE courses SET subscribers = array_append((select subscribers from courses where id='%s') , '%s') WHERE id='%s';", courseID, userID.value, courseID))
-
-		insert, err = db.Query(fmt.Sprintf("INSERT INTO student_courses (student_name, course_id) VALUES('%s','%s')", getUserName(r), courseID))
-		if err != nil {
-			panic(err)
-		}
-		defer insert.Close()
 		//добавление в подписичики курса <--
 	} else {
 		message := "Неверное кодовое слово :("

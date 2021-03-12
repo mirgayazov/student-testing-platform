@@ -59,6 +59,7 @@ func handleFunc() {
 	r.HandleFunc("/saveNewTest", saveNewTest)
 	//
 	r.HandleFunc("/saveUser", saveUser)
+	r.HandleFunc("/deleteUser", deleteUser)
 	http.ListenAndServe(":8080", r)
 }
 
