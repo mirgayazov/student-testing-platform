@@ -13,6 +13,8 @@ func handleFunc() {
 	r := mux.NewRouter()
 	s := http.StripPrefix("/static/", http.FileServer(http.Dir("./static/")))
     r.PathPrefix("/static/").Handler(s)
+	s = http.StripPrefix("/src/", http.FileServer(http.Dir("./src/")))
+	r.PathPrefix("/src/").Handler(s)
 	//
 	r.HandleFunc("/", index)
 	//
