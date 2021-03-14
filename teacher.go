@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	s "strings"
+	"time"
 )
 
 func teacherPanel(w http.ResponseWriter, r *http.Request) {
@@ -401,6 +402,9 @@ func saveNewTest(w http.ResponseWriter, r *http.Request) {
 			topicCounters = append(topicCounters, topicCounter)
 		}
     }
+
+	today := time.Now()
+
 	topicsQuestionsCount := []string{}
 	for i := 0; i < len(Topics); i++ {
 		var topicQuestionsCount string
@@ -408,16 +412,13 @@ func saveNewTest(w http.ResponseWriter, r *http.Request) {
 		topicsQuestionsCount = append(topicsQuestionsCount, topicQuestionsCount)
 	}
 	//--------------------------------------------------------
-	insert, err := db.Query(fmt.Sprintf("INSERT INTO tests (test_name, course_id) VALUES('%s','%s')", testName, courseID))
-	if err != nil {
-		panic(err)
-	}
-	defer insert.Close()
-
 	for i := 0; i < len(Topics); i++ {
-		db.Query(fmt.Sprintf("UPDATE tests SET topics = array_append((select topics from tests where test_name='%s') , '%s') WHERE test_name='%s';", testName, Topics[i].Name, testName))
-		
-		db.Query(fmt.Sprintf("UPDATE tests SET questions_count = array_append((select questions_count from tests where test_name='%s') , '%s') WHERE test_name='%s';", testName, topicsQuestionsCount[i], testName))
+
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO tests (test_name, course_id, topic, questions_count) VALUES('%s','%s','%s','%s')", testName+" ("+today.Format("2006-01-02 15:04:05")+")", courseID, Topics[i].Name, topicsQuestionsCount[i]))
+		if err != nil {
+			panic(err)
+		}
+		defer insert.Close()
 	}
 
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)

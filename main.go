@@ -46,6 +46,9 @@ func handleFunc() {
     r.HandleFunc("/approveRequest/{id:[0-9]+}", approveRequest)
 	r.HandleFunc("/rejectRequest/{id:[0-9]+}", rejectRequest)
 	r.HandleFunc("/course/{id:[0-9]+}", course)
+	r.HandleFunc("/student/course/{id:[0-9]+}", studentCourse)
+	r.HandleFunc("/student/test/{id:[0-9]+}", studentTest)
+	r.HandleFunc("/saveStudentTest", saveStudentTest)
 	r.HandleFunc("/teacherCourses", teacherCourses)
 	//
 	r.HandleFunc("/courseOverview", courseOverview)

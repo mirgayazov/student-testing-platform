@@ -1,0 +1,35 @@
+{{ define "studentTest" }}
+{{ template "header" .Info }}
+<main class="px-3">
+    <hr>
+    <h1>Успехов {{ .Info.UserName }}!</h1>
+    <form action="/saveStudentTest" method="POST">
+        <input hidden name="ids" type="text" value="{{ .Ids }}">
+        <input hidden name="testID" type="text" value="{{ .TestID }}">
+        {{ range .Block }}
+        <hr>
+        <div class="card"
+            style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block; ">
+            <div class="card-body">
+                <h2>Блок: {{ .Topic }}</h2>
+                <hr>
+                <div style="text-align: left;">
+                    {{ range .Questions }}
+                    <h3> {{ .Value }}</h3><input name="ans/{{ .ID }}" class="form-control" type="text" placeholder="Введите ответ">
+                    <hr>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+        {{ end }}
+        <hr>
+        <div class="card"
+            style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block; ">
+            <div class="card-body">
+                <button class="btn btn-success" type="submit">Сохранить</button>
+            </div>
+        </div>
+    </form>
+</main>
+{{ template "footer" }}
+{{ end }}

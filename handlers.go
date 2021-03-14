@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"html/template"
-	"encoding/json"
 	"database/sql"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -219,12 +218,6 @@ func about(w http.ResponseWriter, r *http.Request) {
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
 
-	jdata,err := json.Marshal(info)
-	if err != nil{
-		return 
-	}
-	fmt.Println(jdata)
-
-	t.ExecuteTemplate(w, "about", struct{Info, Message interface{}}{info, string(jdata)});
-	// t.ExecuteTemplate(w, "about", info)
+	// t.ExecuteTemplate(w, "about", struct{Info, Message interface{}}{info, string(jdata)});
+	t.ExecuteTemplate(w, "about", info)
 }

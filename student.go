@@ -1,13 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	"html/template"
 	"database/sql"
+	"fmt"
+	"html/template"
 	"math/rand"
-	"time"
+	"net/http"
 	"strconv"
+	"strings"
+	s "strings"
+	"time"
 )
 
 func random(min, max int) int {
@@ -347,4 +349,192 @@ func studentCourses(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, err.Error())
 	}
 	t.ExecuteTemplate(w, "studentCourses", struct{Info, Course interface{}}{info, corses});
+}
+
+func studentCourse(w http.ResponseWriter, r *http.Request) {
+	type Test struct {
+		ID uint16
+		Name string
+	}
+	courseID := s.Replace(fmt.Sprint(r.URL), "/student/course/", "", -1)
+
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	tests :=[]Test{}
+	res, err := db.Query(fmt.Sprintf("select distinct(test_name) from tests where course_id='%s'", courseID))
+	if err != nil {
+		panic(err)
+	}
+	for res.Next() {
+		var test Test
+		err = res.Scan(&test.Name)
+		if err != nil {
+			panic(err)
+		}
+		res, err = db.Query(fmt.Sprintf("select id from tests where test_name='%s'", test.Name))
+		if err != nil {
+			panic(err)
+		}
+		for res.Next() {
+			err = res.Scan(&test.ID)
+			if err != nil {
+				panic(err)
+			}
+		}
+		defer res.Close()
+		tests = append(tests, test)
+	}
+	defer res.Close()
+
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	t, err := template.ParseFiles("templates/header.html","templates/studentCourse.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+	t.ExecuteTemplate(w, "studentCourse", struct{Info, Test interface{}}{info, tests});
+}
+
+func studentTest(w http.ResponseWriter, r *http.Request) {
+	type Block struct {
+		Topic,  QuestionsCount string
+		Questions []struct {
+			ID uint16
+			Value string
+		}
+	}
+	testID := s.Replace(fmt.Sprint(r.URL), "/student/test/", "", -1)
+
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	var testName string
+	res, err := db.Query(fmt.Sprintf("select test_name from tests where id='%s'", testID))
+	if err != nil {
+		panic(err)
+	}
+	for res.Next() {
+		err = res.Scan(&testName)
+		if err != nil {
+			panic(err)
+		}
+	}
+	defer res.Close()
+
+	blocks :=[]Block{}
+	ids :=[]uint16{}
+	res, err = db.Query(fmt.Sprintf("select topic, questions_count from tests where test_name='%s'", testName))
+	if err != nil {
+		panic(err)
+	}
+	for res.Next() {
+		var block Block
+		err = res.Scan(&block.Topic, &block.QuestionsCount)
+		if err != nil {
+			panic(err)
+		}
+		if block.QuestionsCount != "0"{
+			
+		}
+		//----------------------------------------
+		ques, err := db.Query(fmt.Sprintf("select id, question from questions where topic='%s'", block.Topic))
+		if err != nil {
+			panic(err)
+		}
+		for ques.Next() {
+			var id uint16
+			var question string
+			err = ques.Scan(&id, &question)
+			if err != nil {
+				panic(err)
+			}
+			ids=append(ids, id)
+			block.Questions =append(block.Questions, struct{ID uint16; Value string}{id, question})
+		}
+		defer ques.Close()
+
+		blocks = append(blocks, block)
+	}
+	defer res.Close()
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	t, err := template.ParseFiles("templates/header.html","templates/studentTest.html","templates/footer.html")	
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+	t.ExecuteTemplate(w, "studentTest", struct{Info, Block, Ids, TestID interface{}}{info, blocks, ids, testID});
+}
+
+func saveStudentTest(w http.ResponseWriter, r *http.Request) {
+	Ids := r.FormValue("ids")
+	Ids = s.Replace(Ids, "[", "", -1)
+	Ids = s.Replace(Ids, "]", "", -1)
+	IdsArr := strings.Split(string(Ids), " ")
+	TestID := r.FormValue("testID")
+
+	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	type StudentAnswer struct {
+		Mark uint16
+		QuestionID, Question, StudentAnswer, TrueAnswer string
+	}
+
+	studentAnswers := []StudentAnswer{}
+	var mark uint16
+	for _, id := range IdsArr {
+		var studentAnswer StudentAnswer
+		studentAnswer.StudentAnswer=r.FormValue("ans/"+id)
+		studentAnswer.QuestionID=id
+
+		var trueAns string
+		var ques string
+		res, err := db.Query(fmt.Sprintf("select answer, question from questions where id='%s'", studentAnswer.QuestionID))
+		if err != nil {
+			panic(err)
+		}
+		for res.Next() {
+			err = res.Scan(&trueAns, &ques)
+			if err != nil {
+				panic(err)
+			}
+			studentAnswer.TrueAnswer=trueAns
+			if studentAnswer.StudentAnswer == studentAnswer.TrueAnswer {
+				mark ++
+			}
+		}
+		defer res.Close()
+		studentAnswer.Mark=mark
+		studentAnswer.Question=ques
+		studentAnswers = append(studentAnswers, studentAnswer)
+	}
+
+	today := time.Now()
+
+	for _, stdntans := range studentAnswers {
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO student_answers (question, student_answer, answer, mark,date, student_name, test_id) VALUES('%s','%s','%s','%d','%s','%s', '%s')", stdntans.Question, stdntans.StudentAnswer, stdntans.TrueAnswer, mark, today.Format("2006-01-02 15:04:05"),getUserName(r),TestID))
+		if err != nil {
+			panic(err)
+		}
+		defer insert.Close()
+	}
 }

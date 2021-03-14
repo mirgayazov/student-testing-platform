@@ -1,12 +1,12 @@
-{{ define "studentCourses" }}
+!{{ define "studentCourse" }}
 {{ template "header" .Info }}
 <main class="px-3"><hr>
-    <h1>Мои курсы</h1>
-    {{ range .Course }}
-        <hr>
+    <h1>Доступные тесты</h1>
+    {{ range .Test }}
+    <hr>
         <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
             <div class="card-body">
-              <a href="/student/course/{{ .ID }}" class="btn btn-info">{{ .CourseName }}</a><hr>
+                <a href="/student/test/{{ .ID }}">{{ .Name }}</a><hr>
               <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
             </div>
         </div>
