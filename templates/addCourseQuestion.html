@@ -1,15 +1,19 @@
 {{ define "addCourseQuestion" }}
 {{ template "header" .Info }}
-<main class="px-3"><hr>
-    <div class="card" style="width: 28rem; margin: auto auto; background-color: rgb(84, 87, 90); display: inline-block;" >
+<main class="px-3">
+    <hr>
+    <div class="card"
+        style="width: 28rem; margin: auto auto; background-color: rgb(84, 87, 90); display: inline-block;">
         <form action="/saveCourseQuestion" method="POST" style="width: 400px; margin: auto auto; ">
-            <br><h1>Добавление вопроса</h1><br>
+            <br>
+            <h1>Добавление вопроса</h1><br>
             <input type="text" name="question" id="question" placeholder="Введите вопрос" class="form-control"><br>
             <input type="text" name="answer" id="answer" placeholder="Введите ответ" class="form-control"><br>
-            <input type="text" name="topic" id="topic" placeholder="Введите тему"
-            class="form-control"><br>
-            <input type="text" value="{{ .CourseID }}" name="courseid" id="courseid" placeholder="Введите тему" class="form-control" hidden>
-            <button class="btn btn-outline-warning" >Добавить</button><hr>
+            <input type="text" name="topic" id="topic" placeholder="Введите тему" class="form-control"><br>
+            <input type="text" value="{{ .CourseID }}" name="courseid" id="courseid" placeholder="Введите тему"
+                class="form-control" hidden>
+            <button class="btn btn-outline-warning">Добавить</button>
+            <hr>
             <a href="/course/{{ .CourseID }}">Перейти к вопросам</a>
         </form><br>
     </div>

@@ -2,7 +2,9 @@ package main
 
 //Info .....
 type Info struct {
-	UserName, UserStatus, UserPosition string
+	UserName string `json:"username"`
+	UserStatus string `json:"userstatus"`
+	UserPosition string `json:"userposition"`
 }
 
 //Task .....

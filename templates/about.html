@@ -1,20 +1,14 @@
 {{ define "about" }}
-{{ template "header" . }}
-<main class="px-3"><hr>
-    <div class="alert alert-light" role="alert">
-        <h4 class="alert-heading">Отличная работа!</h4>
-        <p>Выполнил студент группы 7291-11 Миргаязов Камиль.</p>
-        <div id="like_button_container"></div>
-        <hr>
-        <p class="mb-0">КНИТУ (КХТИ) 2021</p>
-        
-      </div>
-      <!-- ---------------------------------------------------------------------- -->
-      
-      
-      <!-- Загрузим наш React-компонент. -->
-      <script src="/static/js/like_button.js"></script>
-      <!-- ---------------------------------------------------------------------- -->
+{{ template "header" .Info }}
+<main class="px-3">
+  <hr>
+  <div class="alert alert-light" role="alert">
+    <h4 class="alert-heading">Отличная работа!</h4>
+    <p>Выполнил студент группы 7291-11 Миргаязов Камиль.</p>
+    <hr>
+    <p class="mb-0">КНИТУ (КХТИ) 2021</p>
+  </div>
+  <!-- ---------------------------------------------------------------------- -->
 </main>
 {{ template "footer" }}
 {{ end }}

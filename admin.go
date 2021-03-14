@@ -166,4 +166,3 @@ func rejectRequest(w http.ResponseWriter, r *http.Request) {
 		}
 		t.ExecuteTemplate(w, "message", message)
 }
-	

@@ -1,16 +1,18 @@
 {{ define "adminRequests" }}
 {{ template "header" .Info }}
-<main class="px-3"><hr>
-    <h1>Заявки</h1>  
+<main class="px-3">
+    <hr>
+    <h1>Заявки</h1>
     {{ range .Request }}
-        <hr>
-        <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
-            <div class="card-body">
-                <h3>{{ .TeacherName}} хочет создать курс под названием "{{ .CourseName }}"</h3><hr>
-                <a class="btn btn-success" href="/approveRequest/{{ .ID }}">Одобрить</a>
-                <a class="btn btn-danger" href="/rejectRequest/{{ .ID }}">Отклонить</a><br>
-            </div>
+    <hr>
+    <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;">
+        <div class="card-body">
+            <h3>{{ .TeacherName}} хочет создать курс под названием "{{ .CourseName }}"</h3>
+            <hr>
+            <a class="btn btn-success" href="/approveRequest/{{ .ID }}">Одобрить</a>
+            <a class="btn btn-danger" href="/rejectRequest/{{ .ID }}">Отклонить</a><br>
         </div>
+    </div>
     {{ end }}
 </main>
 {{ template "footer" }}
