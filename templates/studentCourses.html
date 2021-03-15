@@ -2,6 +2,8 @@
 {{ template "header" .Info }}
 <main class="px-3"><hr>
     <h1>Мои курсы</h1>
+    <div class="nav-link" id="rightMenu" ></div>
+    <script src="/static/js/rightMenu.js"></script>
     {{ range .Course }}
         <hr>
         <div class="card" style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block;" >
