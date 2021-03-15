@@ -365,7 +365,7 @@ func studentCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	tests :=[]Test{}
-	res, err := db.Query(fmt.Sprintf("select distinct(test_name) from tests where course_id='%s'", courseID))
+	res, err := db.Query(fmt.Sprintf("select distinct test_name from tests where course_id='%s'", courseID))
 	if err != nil {
 		panic(err)
 	}
@@ -375,17 +375,18 @@ func studentCourse(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		res, err = db.Query(fmt.Sprintf("select id from tests where test_name='%s'", test.Name))
+		fmt.Println(test.Name)
+		res2, err := db.Query(fmt.Sprintf("select id from tests where test_name='%s'", test.Name))
 		if err != nil {
 			panic(err)
 		}
-		for res.Next() {
-			err = res.Scan(&test.ID)
+		for res2.Next() {
+			err = res2.Scan(&test.ID)
 			if err != nil {
 				panic(err)
 			}
 		}
-		defer res.Close()
+		defer res2.Close()
 		tests = append(tests, test)
 	}
 	defer res.Close()
@@ -445,26 +446,26 @@ func studentTest(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 		if block.QuestionsCount != "0"{
-			
-		}
-		//----------------------------------------
-		ques, err := db.Query(fmt.Sprintf("select id, question from questions where topic='%s'", block.Topic))
-		if err != nil {
-			panic(err)
-		}
-		for ques.Next() {
-			var id uint16
-			var question string
-			err = ques.Scan(&id, &question)
+			//----------------------------------------
+			ques, err := db.Query(fmt.Sprintf("select id, question from questions where topic='%s'", block.Topic))
 			if err != nil {
 				panic(err)
 			}
-			ids=append(ids, id)
-			block.Questions =append(block.Questions, struct{ID uint16; Value string}{id, question})
-		}
-		defer ques.Close()
+			for ques.Next() {
+				var id uint16
+				var question string
+				err = ques.Scan(&id, &question)
+				if err != nil {
+					panic(err)
+				}
+				ids=append(ids, id)
+				block.Questions =append(block.Questions, struct{ID uint16; Value string}{id, question})
+			}
+			defer ques.Close()
 
-		blocks = append(blocks, block)
+			blocks = append(blocks, block)
+		}
+		
 	}
 	defer res.Close()
 
