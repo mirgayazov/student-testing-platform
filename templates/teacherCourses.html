@@ -1,6 +1,8 @@
 {{ define "teacherCourses" }}
 {{ template "header" .Info }}
 <main class="px-3"><hr>
+    <div class="nav-link" id="rightMenu" ></div>
+    <script src="/static/js/rightMenu.js"></script>
     <h1>Мои курсы</h1>
     {{ range .Course }}
         <hr>

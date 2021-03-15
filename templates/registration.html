@@ -1,6 +1,8 @@
 {{ define "registration" }}
 {{ template "header" .Info }}
 <main class="px-3"><hr>
+    <div class="nav-link" id="rightMenu" ></div>
+    <script src="/static/js/rightMenu.js"></script>
     <div class="card" style="width: 28rem; margin: auto auto; background-color: rgb(84, 87, 90); display: inline-block;" >
         <form action="/saveUser" method="POST" style="width: 400px; margin: auto auto;">
             <br><h1>Регистрация</h1>

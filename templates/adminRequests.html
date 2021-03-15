@@ -1,6 +1,8 @@
 {{ define "adminRequests" }}
 {{ template "header" .Info }}
 <main class="px-3">
+    <div class="nav-link" id="rightMenu" ></div>
+    <script src="/static/js/rightMenu.js"></script>
     <hr>
     <h1>Заявки</h1>
     {{ range .Request }}
