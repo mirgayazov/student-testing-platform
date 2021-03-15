@@ -2,7 +2,19 @@
 {{ template "header" .Info }}
 <main class="px-3">
     <hr>
+    <link rel="stylesheet" href="/static/css/timer.css">
     <h1>Успехов {{ .Info.UserName }}!</h1>
+    <hr>
+    <div id="app" style="position: fixed; bottom: 0; right: 0; "></div>
+    <script src="/static/js/timer.js" type="text/javascript">
+    </script>
+    <button hidden id="starttimer" onclick="startTimer({{ .TestTime }}*60)"></button>
+    <script>
+        function start() {
+           document.getElementById("starttimer").click()
+      }
+      start()
+   </script>
     <form action="/saveStudentTest" method="POST">
         <input hidden name="ids" type="text" value="{{ .Ids }}">
         <input hidden name="testID" type="text" value="{{ .TestID }}">
@@ -15,18 +27,34 @@
                 <hr>
                 <div style="text-align: left;">
                     {{ range .Questions }}
-                    <h3> {{ .Value }}</h3><input name="ans/{{ .ID }}" class="form-control" type="text" placeholder="Введите ответ">
+                    <h3> {{ .Value }}</h3><input name="ans/{{ .ID }}" class="form-control" type="text"
+                        placeholder="Введите ответ">
                     <hr>
                     {{ end }}
                 </div>
             </div>
         </div>
         {{ end }}
+        <script>
+            function endTest() {
+                document.getElementById("endTestBtn").click()
+            }
+            setTimeout(endTest, {{ .TestTime }}* 1000 * 60);
+        </script>
         <hr>
         <div class="card"
             style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block; ">
             <div class="card-body">
-                <button class="btn btn-success" type="submit">Сохранить</button>
+                <button class="btn btn-success" id="endTestBtn" type="submit">Сохранить</button><hr>
+                <script>
+                    function back() {
+                        let code = confirm("Прогресс теста не сохранится, Вы уверены, что хотите выйти?");
+                        if (code) {
+                            history.back();
+                        } 
+                    }
+                </script>
+                <a class="btn btn-danger" onclick="back()">Выйти из тестирования</a>
             </div>
         </div>
     </form>

@@ -355,6 +355,7 @@ func createTest(w http.ResponseWriter, r *http.Request) {
 func saveNewTest(w http.ResponseWriter, r *http.Request) {
 	courseID := r.FormValue("myid")//достал id курса
 	testName := r.FormValue("testName")
+	testTime := r.FormValue("testTime")
 
 	//--------------------------------------------------------
 	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
@@ -414,7 +415,7 @@ func saveNewTest(w http.ResponseWriter, r *http.Request) {
 	//--------------------------------------------------------
 	for i := 0; i < len(Topics); i++ {
 
-		insert, err := db.Query(fmt.Sprintf("INSERT INTO tests (test_name, course_id, topic, questions_count) VALUES('%s','%s','%s','%s')", testName+" ("+today.Format("2006-01-02 15:04:05")+")", courseID, Topics[i].Name, topicsQuestionsCount[i]))
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO tests (test_name, course_id, topic, questions_count,time) VALUES('%s','%s','%s','%s','%s')", testName+" ("+today.Format("2006-01-02 15:04:05")+")", courseID, Topics[i].Name, topicsQuestionsCount[i], testTime))
 		if err != nil {
 			panic(err)
 		}

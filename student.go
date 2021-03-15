@@ -421,12 +421,13 @@ func studentTest(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	var testName string
-	res, err := db.Query(fmt.Sprintf("select test_name from tests where id='%s'", testID))
+	var testTime int
+	res, err := db.Query(fmt.Sprintf("select test_name, time from tests where id='%s'", testID))
 	if err != nil {
 		panic(err)
 	}
 	for res.Next() {
-		err = res.Scan(&testName)
+		err = res.Scan(&testName, &testTime)
 		if err != nil {
 			panic(err)
 		}
@@ -478,7 +479,8 @@ func studentTest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	t.ExecuteTemplate(w, "studentTest", struct{Info, Block, Ids, TestID interface{}}{info, blocks, ids, testID});
+
+	t.ExecuteTemplate(w, "studentTest", struct{Info, Block, Ids, TestID, TestTime interface{}}{info, blocks, ids, testID, testTime});
 }
 
 func saveStudentTest(w http.ResponseWriter, r *http.Request) {
