@@ -6,9 +6,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 func tizd(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("1")
 	t, err := template.ParseFiles("templates/tizd.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
@@ -226,5 +228,42 @@ func about(w http.ResponseWriter, r *http.Request) {
 	info.UserPosition = getUserPosition(r)
 
 	// t.ExecuteTemplate(w, "about", struct{Info, Message interface{}}{info, string(jdata)});
-	t.ExecuteTemplate(w, "about", info)
+	t.ExecuteTemplate(w, "about",  struct{Info interface{}}{info})
+	
+}
+
+func classIris(w http.ResponseWriter, r *http.Request) {
+	dlina := r.FormValue("dlina")
+	shirina := r.FormValue("shirina")
+
+	var class string
+
+	dl, _ := strconv.ParseFloat(dlina,10)
+	sh, _ := strconv.ParseFloat(shirina,10)
+
+	if dl <2.45 {
+		class = "Iris-setosa"
+	}
+
+	if (dl >=2.45)&&(sh<1.75)&&(dl<4.95)&&(sh>=1.55) {
+		class = "Iris-versicolor"
+	}
+
+	if ((dl >=2.45)&&(sh<1.75))||((dl >=4.95)&&(sh<1.55)) {
+		class = "Iris-virginica"
+	}
+
+	fmt.Println(class)
+	t, err := template.ParseFiles("templates/about.html", "templates/header.html", "templates/footer.html")
+
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+	}
+
+	var info Info
+	info.UserName = getUserName(r)
+	info.UserStatus = getUserStatus(r)
+	info.UserPosition = getUserPosition(r)
+
+	t.ExecuteTemplate(w, "about", struct{Info, Class interface{}}{info, class});
 }

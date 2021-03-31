@@ -1,5 +1,5 @@
 {{ define "about" }}
-{{ template "header" . }}
+{{ template "header" .Info }}
 <main class="px-3">
   <div class="nav-link" id="rightMenu" ></div>
   <script src="/static/js/rightMenu.js"></script>
@@ -10,6 +10,13 @@
     <hr>
     <p class="mb-0">КНИТУ (КХТИ) 2021</p>
   </div>
+  <!-- <form action="/classIris" method="POST" style="width: 400px; margin: auto auto;">
+    <br><h1>Определения вида ириса</h1>
+    <input required type="text" name="dlina" id="dlina" placeholder="Введите длину лепестка" class="form-control"><br>
+    <input required type="text" name="shirina" id="shirina" placeholder="Введите ширину лепестка" class="form-control"><br>
+    <button class="btn btn-outline-success">Определить вид</button>
+</form><br>
+<h1>Класс ирисов: {{ .Class }}</h1> -->
 </main>
 {{ template "footer" }}
 {{ end }}

@@ -1,6 +1,8 @@
 {{ define "createTest" }}
 {{ template "header" .Info }}
 <main class="px-3"><hr>
+    <div class="nav-link" id="rightMenu" ></div>
+    <script src="/static/js/rightMenu.js"></script>
     <div class="card" style="width: 38rem; margin: auto auto; background-color: rgb(84, 87, 90); display: inline-block;" >
         <form action="/saveNewTest" method="POST" style="width: 600px; margin: auto auto; ">
             <br><h2>Генерация теста</h2><br>

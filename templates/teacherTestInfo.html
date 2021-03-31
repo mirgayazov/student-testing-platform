@@ -1,0 +1,34 @@
+{{ define "teacherTestInfo" }} {{ template "header" .Info }}
+<main class="px-3">
+  <hr />
+  <div class="nav-link" id="rightMenu"></div>
+  <script src="/static/js/rightMenu.js"></script>
+  <h1>Результаты теста</h1>
+  {{ range .Stdnts }}
+  <hr />
+  <div
+    class="card"
+    style="
+      width: 38rem;
+      margin: auto auto;
+      background-color: lightslategrey;
+      display: inline-block;
+    "
+  >
+    <div class="card-body">
+      <a href="+{{ . }}"> Результаты пользователя: {{ . }}</a>
+      <button onclick="red({{ . }})">посмотреть</button>
+      <script>
+        function red(name) {
+          let baseURL = window.location.href;
+          let newURL = baseURL + "/" + name;
+          document.location.href = newURL;
+        }
+      </script>
+   
+    </div>
+  </div>
+  {{ end }}
+</main>
+{{ template "footer" }} 
+{{ end }}

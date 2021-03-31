@@ -18,7 +18,7 @@ func random(min, max int) int {
 }
 
 func studentPanel(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/studentPanel.html","templates/header.html","templates/footer.html")	
+	t, err := template.ParseFiles("templates/studentPanel.html", "templates/header.html", "templates/footer.html")
 
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
@@ -29,27 +29,27 @@ func studentPanel(w http.ResponseWriter, r *http.Request) {
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
 
-	t.ExecuteTemplate(w, "studentPanel", info)	
+	t.ExecuteTemplate(w, "studentPanel", info)
 }
 
-var tasks =[]Task{}
-var tasks2 =[]Task{}
-var ids =[]uint16{}
-var ras =[]string{}
+var tasks = []Task{}
+var tasks2 = []Task{}
+var ids = []uint16{}
+var ras = []string{}
 
 func testing(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/testing.html","templates/header.html","templates/footer.html")
+	t, err := template.ParseFiles("templates/testing.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	
+
 	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
-	
+
 	res, err := db.Query("SELECT id, question, answer FROM public.questions")
 	if err != nil {
 		panic(err)
@@ -68,7 +68,7 @@ func testing(w http.ResponseWriter, r *http.Request) {
 		task.Index = i
 		tasks = append(tasks, task)
 		ids = append(ids, task.ID)
-		i=i+1
+		i = i + 1
 		//создал массив id-шников осталось рандомом достать 3 штуки и по id достать вопрос + ответ
 	}
 	//----------------------------------------------------------------------------
@@ -91,15 +91,15 @@ func testing(w http.ResponseWriter, r *http.Request) {
 	tasks2 = append(tasks2, tasks[0])
 	tasks2 = append(tasks2, tasks[4])
 	tasks2 = append(tasks2, tasks[5])
-	tasks2[0].Index=1
-	tasks2[1].Index=2
-	tasks2[2].Index=3
+	tasks2[0].Index = 1
+	tasks2[1].Index = 2
+	tasks2[2].Index = 3
 	t.ExecuteTemplate(w, "testing", tasks2)
 }
 
-func checkAndSaveTest(w  http.ResponseWriter, r *http.Request) {
-	uas := []string{r.FormValue("ua1"),r.FormValue("ua2"),r.FormValue("ua3")}
-	dbids := []string{r.FormValue("id1"),r.FormValue("id2"),r.FormValue("id3")}
+func checkAndSaveTest(w http.ResponseWriter, r *http.Request) {
+	uas := []string{r.FormValue("ua1"), r.FormValue("ua2"), r.FormValue("ua3")}
+	dbids := []string{r.FormValue("id1"), r.FormValue("id2"), r.FormValue("id3")}
 
 	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
@@ -108,8 +108,8 @@ func checkAndSaveTest(w  http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 	ras = []string{}
-	count :=0
-	for i := 0; i < len(uas); i++{
+	count := 0
+	for i := 0; i < len(uas); i++ {
 		res, err := db.Query(fmt.Sprintf("SELECT answer FROM public.questions where id=%s", dbids[i]))
 		if err != nil {
 			panic(err)
@@ -121,14 +121,14 @@ func checkAndSaveTest(w  http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 			ras = append(ras, ra)
-			if ra==uas[i] {
-				fmt.Println("Верный ответ, вопрос: ",i+1)
+			if ra == uas[i] {
+				fmt.Println("Верный ответ, вопрос: ", i+1)
 				count++
 			}
 		}
-    } 
+	}
 	message := fmt.Sprintf("Вы ответили правильно на %d вопроса(ов)", count)
-	t, err := template.ParseFiles("templates/message.html","templates/footer.html")	
+	t, err := template.ParseFiles("templates/message.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
@@ -136,7 +136,7 @@ func checkAndSaveTest(w  http.ResponseWriter, r *http.Request) {
 }
 
 func courseOverview(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/student/courseOverview.html","templates/header.html","templates/footer.html")	
+	t, err := template.ParseFiles("templates/student/courseOverview.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
@@ -168,12 +168,12 @@ func courseOverview(w http.ResponseWriter, r *http.Request) {
 	}
 	defer res.Close()
 
-	t.ExecuteTemplate(w, "courseOverview", struct{Info, Course interface{}}{info, courses});
+	t.ExecuteTemplate(w, "courseOverview", struct{ Info, Course interface{} }{info, courses})
 }
 
 func findCourse(w http.ResponseWriter, r *http.Request) {
 	courseOrTeacherName := r.FormValue("courseOrTeacherName")
-	
+
 	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -185,8 +185,8 @@ func findCourse(w http.ResponseWriter, r *http.Request) {
 	info.UserName = getUserName(r)
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
-	percent :="%"
-	res, err := db.Query(fmt.Sprintf("SELECT id, course_name FROM courses where course_name similar to '%s%s' or teacher_name='%s'",courseOrTeacherName, percent, courseOrTeacherName))
+	percent := "%"
+	res, err := db.Query(fmt.Sprintf("SELECT id, course_name FROM courses where course_name similar to '%s%s' or teacher_name='%s'", courseOrTeacherName, percent, courseOrTeacherName))
 	if err != nil {
 		panic(err)
 	}
@@ -201,11 +201,11 @@ func findCourse(w http.ResponseWriter, r *http.Request) {
 	}
 	defer res.Close()
 
-	t, err := template.ParseFiles("templates/student/courseOverview.html","templates/header.html","templates/footer.html")	
+	t, err := template.ParseFiles("templates/student/courseOverview.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	t.ExecuteTemplate(w, "courseOverview", struct{Info, Course interface{}}{info, courses});
+	t.ExecuteTemplate(w, "courseOverview", struct{ Info, Course interface{} }{info, courses})
 }
 
 func checkCodeword(w http.ResponseWriter, r *http.Request) {
@@ -238,14 +238,14 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 
 	if correctcodeword.value == codeword {
 		message := "Вы успешно подписались на курс!"
-		t, err := template.ParseFiles("templates/course_subscribe_message.html","templates/footer.html")	
+		t, err := template.ParseFiles("templates/course_subscribe_message.html", "templates/footer.html")
 		if err != nil {
 			fmt.Fprintf(w, err.Error())
 		}
 		status := "correctcodeword"
-		t.ExecuteTemplate(w, "course_subscribe_message", struct{Message, Status interface{}}{message, status});
+		t.ExecuteTemplate(w, "course_subscribe_message", struct{ Message, Status interface{} }{message, status})
 		//добавление в подписичики курса -->
-		res, err := db.Query(fmt.Sprintf("select id from users where user_name='%s'",getUserName(r)))
+		res, err := db.Query(fmt.Sprintf("select id from users where user_name='%s'", getUserName(r)))
 		if err != nil {
 			panic(err)
 		}
@@ -265,12 +265,12 @@ func checkCodeword(w http.ResponseWriter, r *http.Request) {
 		//добавление в подписичики курса <--
 	} else {
 		message := "Неверное кодовое слово :("
-		t, err := template.ParseFiles("templates/course_subscribe_message.html","templates/footer.html")	
+		t, err := template.ParseFiles("templates/course_subscribe_message.html", "templates/footer.html")
 		if err != nil {
 			fmt.Fprintf(w, err.Error())
 		}
 		status := "invalidcodeword"
-		t.ExecuteTemplate(w, "course_subscribe_message", struct{Message, Status interface{}}{message, status});
+		t.ExecuteTemplate(w, "course_subscribe_message", struct{ Message, Status interface{} }{message, status})
 	}
 	//берем из бд кодовое слово по id курса - cравниваем <--
 }
@@ -286,7 +286,7 @@ func studentCourses(w http.ResponseWriter, r *http.Request) {
 	courseIDS := []string{}
 	corses := []Course{}
 
-	res, err := db.Query(fmt.Sprintf("select id from users where user_name='%s'",getUserName(r)))
+	res, err := db.Query(fmt.Sprintf("select id from users where user_name='%s'", getUserName(r)))
 	if err != nil {
 		panic(err)
 	}
@@ -299,7 +299,7 @@ func studentCourses(w http.ResponseWriter, r *http.Request) {
 	}
 	defer res.Close()
 
-	res, err = db.Query(fmt.Sprintf("select course_id from course_subscribers where student_id='%s'",userID))
+	res, err = db.Query(fmt.Sprintf("select course_id from course_subscribers where student_id='%s'", userID))
 	if err != nil {
 		panic(err)
 	}
@@ -327,15 +327,14 @@ func studentCourses(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		defer res.Close()
-		
 
 		parsedID, err := strconv.ParseInt(courseIDS[i], 0, 16)
 		if err != nil {
 			panic(err)
 		}
-		course.CourseName =courseName
+		course.CourseName = courseName
 		course.ID = parsedID
-		
+
 		corses = append(corses, course)
 	}
 
@@ -344,17 +343,21 @@ func studentCourses(w http.ResponseWriter, r *http.Request) {
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
 
-	t, err := template.ParseFiles("templates/header.html","templates/studentCourses.html","templates/footer.html")	
+	t, err := template.ParseFiles("templates/header.html", "templates/studentCourses.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	t.ExecuteTemplate(w, "studentCourses", struct{Info, Course interface{}}{info, corses});
+	t.ExecuteTemplate(w, "studentCourses", struct{ Info, Course interface{} }{info, corses})
 }
 
 func studentCourse(w http.ResponseWriter, r *http.Request) {
 	type Test struct {
-		ID uint16
-		Name string
+		ID      uint16
+		Name    string
+		Results []struct {
+			Mark uint16
+			Date string
+		}
 	}
 	courseID := s.Replace(fmt.Sprint(r.URL), "/student/course/", "", -1)
 
@@ -364,7 +367,7 @@ func studentCourse(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	defer db.Close()
-	tests :=[]Test{}
+	tests := []Test{}
 	res, err := db.Query(fmt.Sprintf("select distinct test_name from tests where course_id='%s'", courseID))
 	if err != nil {
 		panic(err)
@@ -375,7 +378,7 @@ func studentCourse(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(test.Name)
+
 		res2, err := db.Query(fmt.Sprintf("select id from tests where test_name='%s'", test.Name))
 		if err != nil {
 			panic(err)
@@ -387,28 +390,47 @@ func studentCourse(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		defer res2.Close()
+
+		tstres, err := db.Query(fmt.Sprintf("select distinct mark, date from student_answers where test_id =%d and student_name='%s'", test.ID, getUserName(r)))
+		if err != nil {
+			panic(err)
+		}
+
+		for tstres.Next() {
+			var mark uint16
+			var date string
+			err = tstres.Scan(&mark, &date)
+			if err != nil {
+				panic(err)
+			}
+			test.Results = append(test.Results, struct {
+				Mark uint16
+				Date string
+			}{mark, date})
+		}
+		defer tstres.Close()
+
 		tests = append(tests, test)
 	}
 	defer res.Close()
-
 
 	var info Info
 	info.UserName = getUserName(r)
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
 
-	t, err := template.ParseFiles("templates/header.html","templates/studentCourse.html","templates/footer.html")	
+	t, err := template.ParseFiles("templates/header.html", "templates/studentCourse.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
-	t.ExecuteTemplate(w, "studentCourse", struct{Info, Test interface{}}{info, tests});
+	t.ExecuteTemplate(w, "studentCourse", struct{ Info, Test interface{} }{info, tests})
 }
 
 func studentTest(w http.ResponseWriter, r *http.Request) {
 	type Block struct {
-		Topic,  QuestionsCount string
-		Questions []struct {
-			ID uint16
+		Topic, QuestionsCount string
+		Questions             []struct {
+			ID    uint16
 			Value string
 		}
 	}
@@ -434,8 +456,8 @@ func studentTest(w http.ResponseWriter, r *http.Request) {
 	}
 	defer res.Close()
 
-	blocks :=[]Block{}
-	ids :=[]uint16{}
+	blocks := []Block{}
+	ids := []uint16{}
 	res, err = db.Query(fmt.Sprintf("select topic, questions_count from tests where test_name='%s'", testName))
 	if err != nil {
 		panic(err)
@@ -446,7 +468,7 @@ func studentTest(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		if block.QuestionsCount != "0"{
+		if block.QuestionsCount != "0" {
 			//----------------------------------------
 			ques, err := db.Query(fmt.Sprintf("select id, question from questions where topic='%s'", block.Topic))
 			if err != nil {
@@ -459,14 +481,17 @@ func studentTest(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					panic(err)
 				}
-				ids=append(ids, id)
-				block.Questions =append(block.Questions, struct{ID uint16; Value string}{id, question})
+				ids = append(ids, id)
+				block.Questions = append(block.Questions, struct {
+					ID    uint16
+					Value string
+				}{id, question})
 			}
 			defer ques.Close()
 
 			blocks = append(blocks, block)
 		}
-		
+
 	}
 	defer res.Close()
 
@@ -475,12 +500,12 @@ func studentTest(w http.ResponseWriter, r *http.Request) {
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
 
-	t, err := template.ParseFiles("templates/header.html","templates/studentTest.html","templates/footer.html")	
+	t, err := template.ParseFiles("templates/header.html", "templates/studentTest.html", "templates/footer.html")
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
 	}
 
-	t.ExecuteTemplate(w, "studentTest", struct{Info, Block, Ids, TestID, TestTime interface{}}{info, blocks, ids, testID, testTime});
+	t.ExecuteTemplate(w, "studentTest", struct{ Info, Block, Ids, TestID, TestTime interface{} }{info, blocks, ids, testID, testTime})
 }
 
 func saveStudentTest(w http.ResponseWriter, r *http.Request) {
@@ -498,7 +523,7 @@ func saveStudentTest(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	type StudentAnswer struct {
-		Mark uint16
+		Mark                                            uint16
 		QuestionID, Question, StudentAnswer, TrueAnswer string
 	}
 
@@ -506,8 +531,8 @@ func saveStudentTest(w http.ResponseWriter, r *http.Request) {
 	var mark uint16
 	for _, id := range IdsArr {
 		var studentAnswer StudentAnswer
-		studentAnswer.StudentAnswer=r.FormValue("ans/"+id)
-		studentAnswer.QuestionID=id
+		studentAnswer.StudentAnswer = r.FormValue("ans/" + id)
+		studentAnswer.QuestionID = id
 
 		var trueAns string
 		var ques string
@@ -520,24 +545,39 @@ func saveStudentTest(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
-			studentAnswer.TrueAnswer=trueAns
+			studentAnswer.TrueAnswer = trueAns
 			if studentAnswer.StudentAnswer == studentAnswer.TrueAnswer {
-				mark ++
+				mark++
 			}
 		}
 		defer res.Close()
-		studentAnswer.Mark=mark
-		studentAnswer.Question=ques
+		studentAnswer.Mark = mark
+		studentAnswer.Question = ques
 		studentAnswers = append(studentAnswers, studentAnswer)
 	}
 
 	today := time.Now()
 
 	for _, stdntans := range studentAnswers {
-		insert, err := db.Query(fmt.Sprintf("INSERT INTO student_answers (question, student_answer, answer, mark,date, student_name, test_id) VALUES('%s','%s','%s','%d','%s','%s', '%s')", stdntans.Question, stdntans.StudentAnswer, stdntans.TrueAnswer, mark, today.Format("2006-01-02 15:04:05"),getUserName(r),TestID))
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO student_answers (question, student_answer, answer, mark,date, student_name, test_id) VALUES('%s','%s','%s','%d','%s','%s', '%s')", stdntans.Question, stdntans.StudentAnswer, stdntans.TrueAnswer, mark, today.Format("2006-01-02 15:04:05"), getUserName(r), TestID))
 		if err != nil {
 			panic(err)
 		}
 		defer insert.Close()
 	}
+
+	res3, err := db.Query(fmt.Sprintf("select course_id from tests where id='%s'", TestID))
+	if err != nil {
+		panic(err)
+	}
+	var courseId string
+	for res3.Next() {
+		err = res3.Scan(&courseId)
+		if err != nil {
+			panic(err)
+		}
+	}
+	defer res3.Close()
+
+	http.Redirect(w, r, "/student/course/"+courseId, 302)
 }

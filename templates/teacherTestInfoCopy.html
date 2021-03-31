@@ -1,0 +1,72 @@
+{{ define "teacherTestInfoCopy" }} {{ template "header" .Info }}
+<main class="px-3">
+  <hr />
+  <div class="nav-link" id="rightMenu"></div>
+  <script src="/static/js/rightMenu.js"></script>
+  <h1>Результаты студента: {{ .StdName }}</h1>
+  <hr />
+  <div class="card" style="
+      width: 38rem;
+      margin: auto auto;
+      background-color: lightslategrey;
+      display: inline-block;
+    ">
+    <div class="card-body">
+      <hr />
+      <table style="margin: auto; border-spacing: 5px 5px" border="1">
+        <tr style="padding: 10px 0">
+          <td style="padding: 10px">Вопрос</td>
+          <td style="padding: 10px">ᅠОтвет</td>
+          <td style="padding: 10px">Ответ студента</td>
+          <td style="padding: 10px">Оценка</td>
+          <td style="padding: 10px">ᅠДата</td>
+        </tr>
+      </table>
+      <hr>
+      {{ range .StdntAnswrs }}
+      <table style="margin: auto; border-spacing: 5px 5px" border="1">
+
+        {{ range . }}
+        <tr style="padding: 10px 0">
+          <td style="padding: 10px">{{ .Question }}</td>
+          <td style="padding: 10px">{{ .Answer }}</td>
+          <td style="padding: 10px">{{ .StudentAnswer }}</td>
+          <td class="mark" style="padding: 10px; color: #000;">{{ .Mark }}</td>
+          <td class="date" style="padding: 10px">{{ .Date }}</td>
+        </tr>
+
+        {{ end }}
+
+      </table>
+      <!-- <h2>Оценка: {{ . }}</h2>
+      <h4>Дата: {{ .   }}</h4> -->
+      <hr>
+      {{ end }}
+      <script>
+        let tds = document.getElementsByClassName('mark');
+        for (let j = 0; j < tds.length; j++) {
+          if (j % 3) {
+            const element = tds[j];
+            element.setAttribute('hidden', true)
+          } else {
+            const element = tds[j];
+            element.setAttribute('rowspan', '3')
+          }
+
+        }
+        let tds2 = document.getElementsByClassName('date');
+        for (let j = 0; j < tds2.length; j++) {
+          if (j % 3) {
+            const element = tds2[j];
+            element.setAttribute('hidden', true)
+          } else {
+            const element = tds2[j];
+            element.setAttribute('rowspan', '3')
+          }
+        }
+      </script>
+      <div style="text-align: left"></div>
+    </div>
+  </div>
+</main>
+{{ template "footer" }} {{ end }}

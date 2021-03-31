@@ -11,10 +11,10 @@
     <button hidden id="starttimer" onclick="startTimer({{ .TestTime }}*60)"></button>
     <script>
         function start() {
-           document.getElementById("starttimer").click()
-      }
-      start()
-   </script>
+            document.getElementById("starttimer").click()
+        }
+        start()
+    </script>
     <form action="/saveStudentTest" method="POST">
         <input hidden name="ids" type="text" value="{{ .Ids }}">
         <input hidden name="testID" type="text" value="{{ .TestID }}">
@@ -45,19 +45,25 @@
         <div class="card"
             style="width: 28rem; margin: auto auto; background-color: lightslategrey; display: inline-block; ">
             <div class="card-body">
-                <button class="btn btn-success" id="endTestBtn" type="submit">Сохранить</button><hr>
+                <button class="btn btn-success" id="endTestBtn" type="submit">Сохранить</button>
+                <hr>
                 <script>
                     function back() {
                         let code = confirm("Прогресс теста не сохранится, Вы уверены, что хотите выйти?");
                         if (code) {
                             history.back();
-                        } 
+                        }
                     }
                 </script>
                 <a class="btn btn-danger" onclick="back()">Выйти из тестирования</a>
             </div>
         </div>
     </form>
+    <!-- <script>
+        function exit() {
+            history.back(-2);
+        }
+    </script> -->
 </main>
 {{ template "footer" }}
 {{ end }}

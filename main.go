@@ -48,6 +48,8 @@ func handleFunc() {
 	r.HandleFunc("/course/{id:[0-9]+}", course)
 	r.HandleFunc("/student/course/{id:[0-9]+}", studentCourse)
 	r.HandleFunc("/student/test/{id:[0-9]+}", studentTest)
+	r.HandleFunc("/teacher/test/{id:[0-9]+}/{slug}", teacherTestInfoStd)
+	r.HandleFunc("/teacher/test/{id:[0-9]+}", teacherTestInfo)
 	r.HandleFunc("/saveStudentTest", saveStudentTest)
 	r.HandleFunc("/teacherCourses", teacherCourses)
 	//
@@ -59,6 +61,9 @@ func handleFunc() {
 	r.HandleFunc("/saveCourseQuestion", saveCourseQuestion)
 	//
 	r.HandleFunc("/studentCourses", studentCourses)
+	r.HandleFunc("/tizd", tizd)
+	r.HandleFunc("/classIris", classIris)
+	
 	//
 	r.HandleFunc("/course/{id:[0-9]+}/createTest", createTest)
 	r.HandleFunc("/saveNewTest", saveNewTest)
