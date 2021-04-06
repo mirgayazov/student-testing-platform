@@ -355,8 +355,9 @@ func studentCourse(w http.ResponseWriter, r *http.Request) {
 		ID      uint16
 		Name    string
 		Results []struct {
-			Mark uint16
-			Date string
+			Mark    float32
+			Date    string
+			Percent float32
 		}
 	}
 	courseID := s.Replace(fmt.Sprint(r.URL), "/student/course/", "", -1)
@@ -391,25 +392,43 @@ func studentCourse(w http.ResponseWriter, r *http.Request) {
 		}
 		defer res2.Close()
 
+		//-------------------------------------
+		var allScore int16
+		res23, err := db.Query(fmt.Sprintf("select score from tests where id=%d", test.ID))
+		if err != nil {
+			panic(err)
+		}
+		for res23.Next() {
+			err = res23.Scan(&allScore)
+			if err != nil {
+				panic(err)
+			}
+		}
+		defer res23.Close()
+		fmt.Println("Всего за тест ", allScore)
+		//-------------------------------------
+
 		tstres, err := db.Query(fmt.Sprintf("select distinct mark, date from student_answers where test_id =%d and student_name='%s'", test.ID, getUserName(r)))
 		if err != nil {
 			panic(err)
 		}
 
 		for tstres.Next() {
-			var mark uint16
+			var mark float32
 			var date string
+			var percent float32
 			err = tstres.Scan(&mark, &date)
 			if err != nil {
 				panic(err)
 			}
+			percent = (float32(mark) / float32(allScore)) * 100
 			test.Results = append(test.Results, struct {
-				Mark uint16
+				Mark float32
 				Date string
-			}{mark, date})
+				Percent float32
+			}{mark, date, percent})
 		}
 		defer tstres.Close()
-
 		tests = append(tests, test)
 	}
 	defer res.Close()
@@ -508,6 +527,7 @@ func studentTest(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "studentTest", struct{ Info, Block, Ids, TestID, TestTime interface{} }{info, blocks, ids, testID, testTime})
 }
 
+
 func saveStudentTest(w http.ResponseWriter, r *http.Request) {
 	Ids := r.FormValue("ids")
 	Ids = s.Replace(Ids, "[", "", -1)
@@ -559,7 +579,7 @@ func saveStudentTest(w http.ResponseWriter, r *http.Request) {
 	today := time.Now()
 
 	for _, stdntans := range studentAnswers {
-		insert, err := db.Query(fmt.Sprintf("INSERT INTO student_answers (question, student_answer, answer, mark,date, student_name, test_id) VALUES('%s','%s','%s','%d','%s','%s', '%s')", stdntans.Question, stdntans.StudentAnswer, stdntans.TrueAnswer, mark, today.Format("2006-01-02 15:04:05"), getUserName(r), TestID))
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO student_answers (question, student_answer, answer, mark,date, student_name, test_id) VALUES('%s','%s','%s','%f','%s','%s', '%s')", stdntans.Question, stdntans.StudentAnswer, stdntans.TrueAnswer, Round(float64((float32(mark)/float32(len(IdsArr)))*100)), today.Format("2006-01-02 15:04:05"), getUserName(r), TestID))
 		if err != nil {
 			panic(err)
 		}

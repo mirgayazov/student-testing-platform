@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
+	"math"
 	"net/http"
 	s "strings"
 	"time"
@@ -146,6 +147,14 @@ func teacherCourses(w http.ResponseWriter, r *http.Request) {
 	defer res.Close()
 
 	t.ExecuteTemplate(w, "teacherCourses", struct{ Info, Course interface{} }{info, courses})
+}
+
+func Round(x float64) float64 {
+	t := math.Trunc(x)
+	if math.Abs(x-t) >= 0.5 {
+		return t + math.Copysign(1, x)
+	}
+	return t
 }
 
 func course(w http.ResponseWriter, r *http.Request) {
@@ -386,6 +395,7 @@ func saveNewTest(w http.ResponseWriter, r *http.Request) {
 	courseID := r.FormValue("myid") //достал id курса
 	testName := r.FormValue("testName")
 	testTime := r.FormValue("testTime")
+	testScore := r.FormValue("testScore")
 
 	//--------------------------------------------------------
 	connStr := "user=kamil password=1809 dbname=golang sslmode=disable"
@@ -445,7 +455,7 @@ func saveNewTest(w http.ResponseWriter, r *http.Request) {
 	//--------------------------------------------------------
 	for i := 0; i < len(Topics); i++ {
 
-		insert, err := db.Query(fmt.Sprintf("INSERT INTO tests (test_name, course_id, topic, questions_count,time) VALUES('%s','%s','%s','%s','%s')", testName+" ("+today.Format("2006-01-02 15:04:05")+")", courseID, Topics[i].Name, topicsQuestionsCount[i], testTime))
+		insert, err := db.Query(fmt.Sprintf("INSERT INTO tests (test_name, course_id, topic, questions_count,time, score) VALUES('%s','%s','%s','%s','%s', '%s')", testName+" ("+today.Format("2006-01-02 15:04:05")+")", courseID, Topics[i].Name, topicsQuestionsCount[i], testTime, testScore))
 		if err != nil {
 			panic(err)
 		}
@@ -453,6 +463,15 @@ func saveNewTest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, r.Header.Get("Referer"), 302)
+}
+
+func getUniqueValue(arr []int) map[int]int {
+	//Create a   dictionary of values for each element
+	dict := make(map[int]int)
+	for _, num := range arr {
+		dict[num] = dict[num] + 1
+	}
+	return dict
 }
 
 func teacherTestInfo(w http.ResponseWriter, r *http.Request) {
@@ -486,7 +505,41 @@ func teacherTestInfo(w http.ResponseWriter, r *http.Request) {
 	info.UserName = getUserName(r)
 	info.UserStatus = getUserStatus(r)
 	info.UserPosition = getUserPosition(r)
-	t.ExecuteTemplate(w, "teacherTestInfo", struct{ Info, Stdnts interface{} }{info, stdnts})
+	//--
+	type Data struct {
+		name string
+		mark int
+	}
+	res2, err := db.Query(fmt.Sprintf("SELECT DISTINCT date, mark FROM student_answers where test_id='%s'", testID))
+	if err != nil {
+		panic(err)
+	}
+
+	datas := []Data{}
+	for res2.Next() {
+		var data Data
+		err = res2.Scan(&data.name, &data.mark)
+		if err != nil {
+			panic(err)
+		}
+		datas = append(datas, data)
+	}
+	marks := []int{}
+	for i := 0; i < len(datas); i++ {
+		mark := datas[i].mark
+		marks = append(marks, mark)
+	}
+	defer res2.Close()
+	warMark := []int{}
+	warCount := []int{}
+	warArr := getUniqueValue(marks)
+	for mark := range warArr {
+		warMark = append(warMark, mark)
+		warCount = append(warCount, warArr[mark])
+	}
+	fmt.Println(getUniqueValue(marks)[67])
+	//--
+	t.ExecuteTemplate(w, "teacherTestInfo", struct{ Info, Stdnts, Data, Marks, Counts interface{} }{info, stdnts, datas, warMark, warCount})
 }
 
 func teacherTestInfoStd(w http.ResponseWriter, r *http.Request) {
@@ -501,6 +554,19 @@ func teacherTestInfoStd(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	defer db.Close()
+	//---------------
+	var allScore float32
+	res33, err := db.Query(fmt.Sprintf("SELECT score from tests where id='%s'", a[0]))
+	if err != nil {
+		panic(err)
+	}
+	for res33.Next() {
+		err = res33.Scan(&allScore)
+		if err != nil {
+			panic(err)
+		}
+	}
+	//---------------
 	var pp int32
 	res3, err := db.Query(fmt.Sprintf("SELECT count(date) from student_answers where test_id='%s' and student_name='%s'", a[0], a[1]))
 	if err != nil {
@@ -547,7 +613,9 @@ func teacherTestInfoStd(w http.ResponseWriter, r *http.Request) {
 	defer res2.Close()
 	type StdntAnswr struct {
 		Question, StudentAnswer, Answer, StudentName, Date string
-		Mark                                               uint16
+		Mark                                               float32
+		Percent                                            float32
+		StrSore                                            string
 	}
 
 	rrr := [][]StdntAnswr{}
@@ -563,6 +631,8 @@ func teacherTestInfoStd(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
+			stdntAnswr.Percent = (float32(stdntAnswr.Mark) * float32(allScore)) / 100
+			stdntAnswr.StrSore = fmt.Sprintf("%.2f", stdntAnswr.Percent)
 			stdntAnswrs = append(stdntAnswrs, stdntAnswr)
 		}
 		defer res.Close()
